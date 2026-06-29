@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    <title>Student Dashboard</title>
+
+    <style>
+
+        body{
+            background:#07122b;
+            color:white;
+            font-family:Arial;
+            padding:40px;
+        }
+
+        .box{
+            background:#1b2945;
+            padding:20px;
+            border-radius:10px;
+            margin-bottom:30px;
+        }
+
+        a{
+            color:#00ffcc;
+            text-decoration:none;
+        }
+
+    </style>
+
+</head>
+<body>
+
+<h1>🎓 Student Dashboard</h1>
+
+<div class="box">
+
+    <h2>📚 Courses</h2>
+
+    {% for course in courses %}
+
+        <p>
+            {{ course.title }}
+            -
+            <a href="/quiz/{{ course.id }}">
+                Start Quiz
+            </a>
+        </p>
+
+    {% endfor %}
+
+</div>
+
+<div class="box">
+
+    <h2>📊 Results</h2>
+
+    {% for result in results %}
+
+        <p>
+
+            Course ID:
+            {{ result.course_id }}
+
+            |
+
+            Score:
+            {{ result.score }}/{{ result.total }}
+
+            |
+
+            {{ result.status }}
+
+        </p>
+
+    {% endfor %}
+
+</div>
+
+</body>
+</html>

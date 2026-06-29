@@ -1,0 +1,87 @@
+<html>
+
+<body style="
+background:#0f172a;
+color:white;
+font-family:Arial;
+padding:40px;
+">
+
+<h1>Course Quiz</h1>
+
+<form method="POST">
+
+{% for quiz in quizzes %}
+
+<div style="
+background:#1e293b;
+padding:20px;
+margin-bottom:20px;
+border-radius:10px;
+">
+
+<h3>
+{{ loop.index }}. {{ quiz.question }}
+</h3>
+
+<label>
+<input type="radio"
+name="question_{{ quiz.id }}"
+value="{{ quiz.option1 }}">
+
+{{ quiz.option1 }}
+</label>
+
+<br><br>
+
+<label>
+<input type="radio"
+name="question_{{ quiz.id }}"
+value="{{ quiz.option2 }}">
+
+{{ quiz.option2 }}
+</label>
+
+<br><br>
+
+<label>
+<input type="radio"
+name="question_{{ quiz.id }}"
+value="{{ quiz.option3 }}">
+
+{{ quiz.option3 }}
+</label>
+
+<br><br>
+
+<label>
+<input type="radio"
+name="question_{{ quiz.id }}"
+value="{{ quiz.option4 }}">
+
+{{ quiz.option4 }}
+</label>
+
+</div>
+
+{% endfor %}
+
+<button type="submit"
+style="
+padding:15px 30px;
+background:#22c55e;
+border:none;
+border-radius:10px;
+color:white;
+font-size:18px;
+cursor:pointer;
+">
+
+Submit Quiz
+
+</button>
+
+</form>
+
+</body>
+</html>

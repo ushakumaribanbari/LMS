@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ course.title }}</title>
+</head>
+
+<body style="background:#0f2027; color:white; padding:30px;">
+
+    <div style="
+max-width:1200px;
+margin:auto;
+">
+
+    <h1>{{ course.title }}</h1>
+    <p>Progress: {{ progress_percent or 0 }}%</p>
+    {% if progress_percent == 100 %}
+
+<a href="/certificate/{{ course.id }}">
+<button style="
+margin-top:20px;
+padding:12px 25px;
+border:none;
+border-radius:30px;
+background:#22c55e;
+color:white;
+font-size:16px;
+cursor:pointer;
+">
+🎓 Download Certificate
+</button>
+</a>
+
+{% endif %}
+
+<div style="background:#334155; height:10px; border-radius:5px;">
+    <div id="progressBar"
+         style="height:10px; background:#22c55e; border-radius:5px; width:0%;">
+    </div>
+</div>
+
+<script>
+    let progress = "{{ progress_percent or 0 }}";  // 👈 string me lo
+    progress = parseInt(progress);                 // 👈 number me convert
+
+    document.getElementById("progressBar").style.width = progress + "%";
+</script>
+    <p>{{ course.description }}</p>
+    <div style="
+display:flex;
+gap:30px;
+margin-top:30px;
+flex-wrap:wrap;
+">
+<div style="flex:2; min-width:300px;"></div>
+    {% if course.video_url %}
+<iframe
+width="100%"
+height="500"
+style="
+border-radius:20px;
+box-shadow:0 10px 30px rgba(0,0,0,0.5);
+"
+src="{{ course.video_url }}"
+frameborder="0"
+allowfullscreen>
+</iframe>
+{% endif %}
+
+    <!-- 🎥 Main Video -->
+    {% if lessons %}
+<iframe id="mainVideo" width="800" height="400"
+    src="{{ lessons[0].video_url }}"
+    frameborder="0"
+    allowfullscreen>
+</iframe>
+{% else %}
+<p>No lessons available</p>
+{% endif %}
+</div>
+<a href="/quiz/{{ course_id }}">
+    <button style="
+        background:#00c853;
+        color:white;
+        border:none;
+        padding:12px 25px;
+        border-radius:8px;
+        font-size:16px;
+        cursor:pointer;
+        margin-top:20px;
+    ">
+        🧠 Start AI Quiz
+    </button>
+</a>
+</a>
+</a>
+<h3>📚 Course Content</h3>
+</div>
+
+<div style="
+flex:1;
+min-width:280px;
+background:#1e293b;
+padding:20px;
+border-radius:15px;
+height:fit-content;
+">
+
+<h2>📚 Course Content</h2>
+
+{% for lesson in lessons %}
+
+<div style="
+margin-bottom:15px;
+padding:15px;
+background:#334155;
+border-radius:12px;
+cursor:pointer;
+transition:0.3s;
+"
+onmouseover="this.style.background='#475569'"
+onmouseout="this.style.background='#334155'">
+
+▶ {{ lesson.title }}
+
+{% if lesson.id in completed_lessons %}
+✔
+{% endif %}
+
+</div>
+
+{% endfor %}
+</div>
+
+    <br>
+    <a href="/">⬅ Back</a>
+
+    <script>
+function changeVideo(url, lessonId) {
+    document.getElementById("mainVideo").src = url;
+
+    fetch('/mark_complete/' + lessonId);
+    fetch('/mark_last_watched/' + lessonId);
+
+    document.getElementById("tick-" + lessonId).innerHTML = "✔";
+}
+</script>
+</div>
+</body>
+</html>
+
+</body>
+</html>

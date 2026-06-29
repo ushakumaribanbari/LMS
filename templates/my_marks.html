@@ -1,0 +1,8 @@
+<h2>My Marks</h2>
+
+{% for m in data %}
+    <div class="card">
+        <p><strong>Assignment:</strong> {{ m.title }}</p>
+        <p><strong>Marks:</strong> {{ m.marks if m.marks else 'Not Given' }}</p>
+    </div>
+{% endfor %}

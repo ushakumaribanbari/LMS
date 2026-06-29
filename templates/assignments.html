@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Assignments</title>
+
+    <style>
+       body {
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+    color: white;
+    padding: 20px;
+}
+
+        h2 {
+            text-align: center;
+        }
+
+        .card {
+    background: rgba(255,255,255,0.08);
+    color: white;
+    padding: 20px;
+    margin: 20px auto;
+    width: 60%;
+    border-radius: 15px;
+    box-shadow: 0 0 10px rgba(0,150,255,0.3);
+}
+
+       button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 20px;
+    background: #00c6ff;
+    color: white;
+    cursor: pointer;
+}
+        button:hover {
+            background: #2980b9;
+        }
+
+        .back {
+    display: block;
+    text-align: center;
+    margin-top: 20px;
+    color: #00c6ff;
+    text-decoration: none;
+}
+        
+    </style>
+
+</head>
+<body>
+<h2>📚 Assignments</h2>
+{% with messages = get_flashed_messages() %}
+  {% if messages %}
+    <p style="color:green; text-align:center; font-weight:bold;">
+      {{ messages[0] }}
+    </p>
+  {% endif %}
+{% endwith %}
+
+{% if assignments %}
+    {% for a in assignments %}
+        <div class="card">
+            <h3>{{ a[2] }}</h3>
+
+            <!-- 👇 Future upload system -->
+            <form action="/submit/{{ a[0] }}" method="POST" enctype="multipart/form-data">
+                <input type="file" name="file" required>
+                <br><br>
+               <input type="submit" value="Submit Assignment">
+            </form>
+            
+        </div>
+    {% endfor %}
+{% else %}
+    <p style="text-align:center;">No assignments available 😢</p>
+{% endif %}
+
+<div class="back">
+    <a href="/dashboard">⬅ Back to Dashboard</a>
+</div>
+
+</body>
+</html>

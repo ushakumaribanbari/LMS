@@ -1,0 +1,1934 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>LMS Home</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+
+    <style>
+        body{
+    margin:0;
+    font-family:'Poppins',sans-serif;
+    background:#f7f9fa;
+    color:#1c1d1f;
+}
+
+  .navbar{
+   background:white;
+border-bottom:1px solid #e5e7eb;
+box-shadow:0 2px 10px rgba(0,0,0,.05);
+}
+.navbar a{
+
+    color:white;
+
+    text-decoration:none;
+
+    margin-left:25px;
+
+    font-size:16px;
+
+    font-weight:600;
+
+    transition:.3s;
+
+    position:relative;
+}
+.navbar a:hover{
+    color:#00c6ff;
+}
+
+.navbar a::after{
+
+    content:'';
+
+    position:absolute;
+
+    width:0;
+
+    height:2px;
+
+    left:0;
+    bottom:-5px;
+
+    background:#00c6ff;
+
+    transition:.3s;
+}
+
+.navbar a:hover::after{
+    width:100%;
+}
+        .hero {
+    text-align: center;
+    padding: 60px 20px;
+
+    min-height:85vh;
+    position:relative;
+    overflow:hidden;
+
+    background:
+    linear-gradient(
+        rgba(0,0,0,0.7),
+        rgba(0,0,0,0.7)
+    ),
+    url('https://images.unsplash.com/photo-1516321318423-f06f85e504b3?q=80&w=1600');
+
+    background-size: cover;
+    background-position: center;
+}
+
+.hero::before{
+    content:'';
+    position:absolute;
+    width:600px;
+    height:600px;
+    background:radial-gradient(circle,rgba(0,198,255,.25),transparent);
+    top:-150px;
+    right:-150px;
+    border-radius:50%;
+}
+
+.hero::after{
+    content:'';
+    position:absolute;
+    width:500px;
+    height:500px;
+    background:radial-gradient(circle,rgba(255,0,255,.15),transparent);
+    bottom:-150px;
+    left:-150px;
+    border-radius:50%;
+}
+
+.hero h1{
+
+    font-size:72px;
+    font-weight:700;
+
+    background:linear-gradient(
+        45deg,
+        #00c6ff,
+        #00ffcc,
+        #ffffff
+    );
+
+    background-clip:text;
+    -webkit-background-clip:text;
+
+    -webkit-text-fill-color:transparent;
+
+    margin-bottom:20px;
+}
+
+.hero p {
+    font-size: 20px;
+    color: #ddd;
+}
+
+        .features {
+            display: flex;
+            justify-content: space-around;
+            padding: 50px;
+            flex-wrap: wrap;
+        }
+
+       .card {
+    background: rgba(255,255,255,0.08);
+    padding: 25px;
+    border-radius: 20px;
+    width: 260px;
+    min-height: 160px;
+
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+
+    text-align:center;
+
+    box-shadow: 0 0 15px rgba(0,198,255,0.2);
+
+    transition: 0.3s;
+}
+        .features a {
+    text-decoration: none;   /* underline हटाएगा */
+    color: white;            /* text white करेगा */
+}
+.card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 10px 25px rgba(0,198,255,0.4);
+}
+
+.features a:hover {
+    color: #00c6ff;          /* hover पर blue */
+}
+        .course-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 25px;
+    padding: 40px;
+    max-height: 500px;
+    overflow-y: auto;
+}
+
+.course-card {
+    width: 250px;
+    min-height: 380px;
+    background: rgba(255,255,255,0.08);
+    border-radius: 15px;
+    padding: 15px;
+    text-align: center;
+    transition: 0.3s;
+
+    display:flex;
+    flex-direction:column;
+    justify-content:space-between;
+
+    transition:0.4s ease;
+cursor:pointer;
+position:relative;
+overflow:hidden;
+}
+
+.wishlist-btn{
+    position:absolute;
+    top:10px;
+    right:10px;
+    width:40px;
+    height:40px;
+    background:red;
+    border-radius:50%;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    color:white;
+    font-size:22px;
+    cursor:pointer;
+    z-index:999;
+}
+
+.course-card iframe {
+    width: 100%;
+    height: 140px;
+    border-radius: 10px;
+    transition: 0.3s;
+}
+
+.course-card:hover {
+    transform: translateY(-10px) scale(1.03);
+
+    box-shadow:
+    0 10px 30px rgba(0,198,255,0.4),
+    0 0 20px rgba(0,198,255,0.3);
+
+    border:1px solid rgba(0,198,255,0.5);
+}
+.course-card h3 {
+    margin-bottom: 10px;
+    font-size: 20px;
+}
+
+.course-card p {
+    font-size: 14px;
+    color: #ccc;
+}
+
+.enroll-btn {
+    margin-top: 15px;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 30px;
+
+    background:#a435f0;
+    color: white;
+    cursor: pointer;
+
+    font-weight: bold;
+
+    transition: 0.3s;
+
+    box-shadow: 0 5px 15px rgba(0,114,255,0.4);
+}
+
+.enroll-btn:hover {
+
+    background:#8710d8;
+    transform: scale(1.08);
+
+    box-shadow:
+    0 10px 25px rgba(0,198,255,0.5),
+    0 0 20px rgba(0,198,255,0.4);
+}
+.courses-container {
+    max-width: 1200px;
+    margin: auto;
+    padding: 40px;
+
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 25px;
+}
+
+.cat-btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 30px;
+    background: rgba(255,255,255,0.1);
+    color: white;
+    cursor: pointer;
+    transition: 0.3s;
+    font-weight: bold;
+}
+
+.cat-btn:hover {
+    background: #00c6ff;
+    transform: scale(1.05);
+}
+
+.features{
+    padding:80px 50px;
+    text-align:center;
+}
+
+.features h1{
+    font-size:50px;
+    text-align:center;
+    margin-bottom:50px;
+}
+.feature-container{
+    display:flex;
+    justify-content:center;
+    align-items:stretch;
+    flex-wrap:wrap;
+    gap:30px;
+
+    max-width:1300px;
+    margin:0 auto;
+}
+
+.feature-box{
+
+    width:260px;
+    min-height:180px;
+    padding:25px;
+    text-align:center;
+
+    background:rgba(255,255,255,0.08);
+
+    backdrop-filter:blur(15px);
+
+    border:1px solid rgba(255,255,255,0.15);
+
+    border-radius:20px;
+
+    box-shadow:
+    0 8px 25px rgba(0,0,0,.15);
+
+    overflow:hidden;
+}
+.feature-link{
+    text-decoration:none;
+    color:inherit;
+    display:block;
+}
+
+.feature-box:hover{
+    transform:translateY(-12px) scale(1.03);
+
+    box-shadow:
+    0 0 25px rgba(0,198,255,.4),
+    0 0 50px rgba(0,198,255,.2);
+
+    border-color:#00c6ff;
+
+    transform:translateY(-10px);
+
+    background:rgba(255,255,255,0.15);
+
+    box-shadow:
+    0 15px 35px rgba(0,0,0,.25);
+}
+
+
+.feature-box h2{
+    color:#00c6ff;
+    color:#111827;
+font-size:32px;
+font-weight:700;
+}
+
+.feature-box p{
+    color:#4b5563;
+    font-size:16px;
+}
+
+
+.categories-section{
+    padding:50px 30px;
+}
+
+.section-title{
+   color:#1c1d1f;
+    font-size:40px;
+    margin-bottom:30px;
+    font-weight:bold;
+}
+
+.categories-container{
+    display:flex;
+    gap:30px;
+    flex-wrap:wrap;
+    justify-content:center;
+    align-items:center;
+    margin-top:40px;
+}
+
+.category-card{
+   background:white;
+border:1px solid #e5e7eb;
+box-shadow:0 2px 8px rgba(0,0,0,.06);
+}
+
+.category-card:hover{
+    transform:translateY(-5px);
+    box-shadow:0 12px 25px rgba(0,0,0,.12);
+}
+
+.category-card h3{
+    font-size:22px;
+    color:#00c3ff;
+    margin-bottom:15px;
+    line-height:1.3;
+}
+
+.category-card p{
+    color:#ddd;
+    font-size:14px;
+}
+
+.course-card:hover{
+    transform:translateY(-10px) scale(1.02);
+    box-shadow:0 10px 30px rgba(0,195,255,0.4);
+}
+
+.course-card::before{
+    content:'';
+    position:absolute;
+    top:0;
+    left:-100%;
+    width:100%;
+    height:100%;
+    background:linear-gradient(
+        120deg,
+        transparent,
+        rgba(255,255,255,0.1),
+        transparent
+    );
+    transition:0.5s;
+}
+
+.course-card:hover::before{
+    left:100%;
+}
+
+.reviews-section{
+    padding:60px 30px;
+}
+
+.reviews-container{
+    display:flex;
+    gap:25px;
+    flex-wrap:wrap;
+    justify-content:center;
+}
+
+.review-card{
+    background:#13293d;
+    padding:30px;
+    width:300px;
+    border-radius:18px;
+    transition:0.3s;
+    box-shadow:0 0 10px rgba(0,0,0,0.3);
+}
+
+.review-card:hover{
+    transform:translateY(-8px);
+    box-shadow:0 0 20px rgba(0,195,255,0.4);
+}
+
+.review-card h3{
+    color:#ffd700;
+    margin-bottom:15px;
+}
+
+.review-card p{
+    color:#ddd;
+    margin-bottom:15px;
+    line-height:1.5;
+}
+
+.instructors-section{
+    padding:60px 30px;
+}
+
+.instructors-container{
+    display:flex;
+    gap:30px;
+    justify-content:center;
+    flex-wrap:wrap;
+}
+
+.instructor-card{
+    background:#13293d;
+    width:280px;
+    padding:30px;
+    border-radius:20px;
+    text-align:center;
+    transition:0.3s;
+}
+
+.instructor-card:hover{
+    transform:translateY(-10px);
+    box-shadow:0 0 20px rgba(0,195,255,0.4);
+}
+
+.instructor-card img{
+    width:120px;
+    height:120px;
+    border-radius:50%;
+    object-fit:cover;
+    margin-bottom:20px;
+    border:4px solid #00c3ff;
+}
+
+.instructor-card h3{
+    color:#00c3ff;
+    margin-bottom:10px;
+}
+
+.instructor-card p{
+    color:#ddd;
+}
+
+.stats-section{
+    padding:60px 20px;
+}
+
+.stats-container{
+    display:flex;
+    justify-content:center;
+    gap:35px;
+    flex-wrap:wrap;
+
+    margin-top:50px;
+}
+
+.stat-box{
+    width:250px;
+    height:220px;
+
+    background:#173454;
+
+    border-radius:20px;
+
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+
+    text-decoration:none;
+    color:white;
+
+    transition:0.3s;
+    cursor:pointer;
+
+    box-shadow:0 0 20px rgba(0,255,255,0.2);
+
+    background:rgba(255,255,255,0.05);
+backdrop-filter:blur(15px);
+
+border:1px solid rgba(255,255,255,0.1);
+
+border-radius:20px;
+
+padding:40px;
+
+transition:.4s ease; 
+}
+
+.stat-box h2{
+    font-size:48px;
+    font-weight:800;
+
+    background:linear-gradient(
+        45deg,
+        #00c6ff,
+        #00ffcc
+    );
+
+    background-clip:text;
+    -webkit-background-clip:text;
+
+    color:transparent;
+    -webkit-text-fill-color:transparent;
+}
+
+.stat-box p{
+    font-size:24px;
+    font-weight:bold;
+}
+
+.stat-box:hover{
+    transform:translateY(-10px) scale(1.05);
+
+    box-shadow:
+    0 0 25px rgba(0,198,255,.5),
+    0 0 50px rgba(0,198,255,.2);
+
+    border-color:#a435f0;
+}
+.trending-courses{
+    margin-top:80px;
+    position:relative;
+    z-index:2;
+}
+
+.course-container{
+    display:flex;
+    flex-wrap:wrap;
+    justify-content:center;
+    gap:30px;
+}
+
+.newsletter-section{
+    text-align:center;
+    padding:80px 20px;
+}
+
+.newsletter-section h2{
+    font-size:40px;
+    margin-bottom:20px;
+}
+
+.newsletter-section p{
+    color:#ccc;
+    margin-bottom:30px;
+}
+
+.newsletter-form{
+    display:flex;
+    justify-content:center;
+    gap:15px;
+    flex-wrap:wrap;
+}
+
+.newsletter-form input{
+    width:350px;
+    padding:15px;
+    border:none;
+    border-radius:12px;
+    outline:none;
+    font-size:16px;
+}
+
+.newsletter-form button{
+    padding:15px 30px;
+    border:none;
+    border-radius:12px;
+    background:#00c3ff;
+    color:white;
+    font-size:16px;
+    cursor:pointer;
+    transition:0.3s;
+}
+
+.newsletter-form button:hover{
+    background:#0099cc;
+}
+
+.preview-btn{
+    background:#ff9800;
+    border:none;
+    padding:12px 20px;
+    border-radius:10px;
+    color:white;
+    cursor:pointer;
+    margin-bottom:10px;
+    transition:0.3s;
+}
+
+.preview-btn:hover{
+    background:#ff7700;
+}
+
+.preview-modal{
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    background:rgba(0,0,0,0.8);
+    display:none;
+    justify-content:center;
+    align-items:center;
+    z-index:9999;
+}
+
+.preview-content{
+    width:80%;
+    max-width:900px;
+    position:relative;
+}
+
+.preview-content iframe{
+    width:100%;
+    height:500px;
+    border-radius:15px;
+}
+
+.close-btn{
+    position:absolute;
+    top:-40px;
+    right:0;
+    font-size:40px;
+    color:white;
+    cursor:pointer;
+}
+
+.course-badge{
+    display:inline-block;
+    background:linear-gradient(45deg,#ff9800,#ff5722);
+    color:white;
+    padding:6px 12px;
+    border-radius:20px;
+    font-size:12px;
+    font-weight:bold;
+    margin:10px 0;
+    box-shadow:0 0 15px rgba(255,87,34,0.4);
+}
+
+.offer-timer{
+    color:#ffcc00;
+    font-size:14px;
+    font-weight:bold;
+    margin-bottom:12px;
+    animation: blink 1s infinite;
+}
+
+@keyframes blink{
+    50%{
+        opacity:0.5;
+    }
+}
+.wishlist-btn{
+    position:absolute;
+    top:15px;
+    right:15px;
+    width:40px;
+    height:40px;
+    background:rgba(0,0,0,0.6);
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:white;
+    font-size:20px;
+    cursor:pointer;
+    z-index:10;
+    transition:0.3s;
+}
+
+.wishlist-btn:hover{
+    transform:scale(1.1);
+}
+
+.wishlist-btn.active{
+    color:red;
+    background:white;
+}
+.wishlist-btn{
+    position:absolute;
+    top:15px;
+    right:15px;
+    width:45px;
+    height:45px;
+    background:red;
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:white;
+    font-size:24px;
+    font-weight:bold;
+    z-index:9999;
+}
+
+.progress-container{
+    width:100%;
+    height:10px;
+    background:#1e3a52;
+    border-radius:10px;
+    overflow:hidden;
+    margin-top:15px;
+}
+
+.progress-bar{
+    width:70%;
+    height:100%;
+    background:linear-gradient(90deg,#00c3ff,#00ff88);
+    border-radius:10px;
+}
+
+.progress-text{
+    color:#ccc;
+    font-size:14px;
+    margin-top:8px;
+}
+
+.ai-chat-btn{
+    position:fixed;
+    bottom:25px;
+    right:25px;
+    width:70px;
+    height:70px;
+    background:linear-gradient(45deg,#00c3ff,#0066ff);
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:32px;
+    cursor:pointer;
+    box-shadow:0 0 25px rgba(0,195,255,0.6);
+    z-index:9999;
+    transition:0.3s;
+    animation:float 2s infinite ease-in-out;
+}
+
+.ai-chat-btn:hover{
+    transform:scale(1.1);
+}
+
+@keyframes float{
+    50%{
+        transform:translateY(-10px);
+    }
+}
+
+.announcement-bar{
+    width:100%;
+    background:linear-gradient(90deg,#ff9800,#ff5722);
+    color:white;
+    padding:12px;
+    font-weight:bold;
+    font-size:16px;
+    position:sticky;
+    top:0;
+    z-index:99999;
+    box-shadow:0 0 15px rgba(255,87,34,0.5);
+}
+
+.badges-section{
+    padding:70px 30px;
+    text-align:center;
+}
+
+.badges-container{
+    display:flex;
+    justify-content:center;
+    gap:25px;
+    flex-wrap:wrap;
+    margin-top:30px;
+}
+
+.badge-card{
+    background:linear-gradient(45deg,#13293d,#1f4b6e);
+    color:white;
+    padding:25px 35px;
+    border-radius:20px;
+    font-size:20px;
+    font-weight:bold;
+    transition:0.3s;
+    box-shadow:0 0 15px rgba(0,0,0,0.3);
+}
+
+.badge-card:hover{
+    transform:translateY(-8px);
+    box-shadow:0 0 25px rgba(0,195,255,0.5);
+}
+
+.stats-section{
+    display:flex;
+    justify-content:center;
+    gap:30px;
+    flex-wrap:wrap;
+    padding:80px 20px;
+}
+
+.stat-box{
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+
+    width:250px;
+    height:220px;
+
+    background:#16385c;
+    border-radius:20px;
+
+    text-decoration:none;
+    color:white;
+
+    cursor:pointer;
+    transition:0.3s;
+
+    position:relative;
+    z-index:999;
+}
+
+.stat-box:hover{
+    transform:translateY(-10px) scale(1.03);
+    box-shadow:0 0 25px cyan;
+}
+
+.stats-box h1{
+    font-size:42px;
+    color:#00c3ff;
+}
+
+.stats-box p{
+    margin-top:10px;
+    font-size:18px;
+}
+
+.testimonial-section{
+    padding:80px 20px;
+    text-align:center;
+}
+
+.testimonial-container{
+    display:flex;
+    justify-content:center;
+    gap:25px;
+    flex-wrap:wrap;
+    margin-top:40px;
+}
+
+.testimonial-card{
+    width:320px;
+    background:linear-gradient(45deg,#13293d,#1d4e75);
+    padding:30px;
+    border-radius:20px;
+    color:white;
+    transition:0.3s;
+    box-shadow:0 0 20px rgba(0,0,0,0.3);
+}
+
+.testimonial-card:hover{
+    transform:translateY(-10px);
+    box-shadow:0 0 25px rgba(0,195,255,0.5);
+}
+
+.testimonial-card p{
+    margin:20px 0;
+    color:#ddd;
+    line-height:1.6;
+}
+
+.cta-section{
+    width:90%;
+    margin:80px auto;
+    padding:70px 30px;
+    border-radius:30px;
+    text-align:center;
+    background:linear-gradient(45deg,#00c3ff,#0066ff);
+    color:white;
+    box-shadow:0 0 35px rgba(0,195,255,0.4);
+
+    position:relative;
+    overflow:hidden;
+}
+
+.cta-section::before{
+
+    content:'';
+
+    position:absolute;
+
+    width:300px;
+    height:300px;
+
+    background:
+    radial-gradient(
+        circle,
+        rgba(255,255,255,.2),
+        transparent
+    );
+
+    top:-100px;
+    right:-100px;
+
+    border-radius:50%;
+}
+
+.cta-section h1{
+    font-size:52px;
+    margin-bottom:20px;
+}
+
+.cta-section p{
+    font-size:20px;
+    margin-bottom:35px;
+}
+
+.cta-btn{
+
+    background:white;
+
+    color:#0066ff;
+
+    border:none;
+
+    padding:18px 45px;
+
+    border-radius:50px;
+
+    font-size:20px;
+
+    font-weight:700;
+
+    cursor:pointer;
+
+    transition:.3s;
+
+    box-shadow:
+    0 0 25px rgba(255,255,255,.25);
+}
+
+.cta-btn:hover{
+
+    transform:
+    translateY(-4px)
+    scale(1.05);
+
+    box-shadow:
+    0 0 35px rgba(255,255,255,.5);
+}
+
+.course-video{
+    width:100%;
+    height:180px;
+    object-fit:cover;
+    border-radius:15px 15px 0 0;
+    background:black;
+}
+
+.hover-video{
+    position:absolute;
+    top:0;
+    left:0;
+    width:100%;
+    height:180px;
+    object-fit:cover;
+    opacity:0;
+    transition:0.3s;
+    border-radius:15px 15px 0 0;
+}
+
+.course-card:hover .hover-video{
+    opacity:1;
+}
+
+.footer{
+width:100%;
+    clear:both;
+    display:block;
+    position:relative;
+background:linear-gradient(90deg,#0f172a,#1e293b);
+padding:50px 20px;
+margin-top:60px;
+color:white;
+
+position:relative;
+overflow:hidden;
+
+background:
+linear-gradient(
+135deg,
+#0f172a,
+#111827,
+#1e293b
+);
+}
+
+.footer::before{
+    content:'';
+
+    position:absolute;
+
+    width:400px;
+    height:400px;
+
+    background:
+    radial-gradient(
+        circle,
+        rgba(0,198,255,.15),
+        transparent
+    );
+
+    top:-150px;
+    right:-150px;
+
+    border-radius:50%;
+}
+
+.footer-container{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+gap:30px;
+max-width:1200px;
+margin:auto;
+}
+
+.footer-box h2,
+.footer-box h3{
+margin-bottom:15px;
+color:#38bdf8;
+}
+
+.footer-box p,
+.footer-box a{
+    display:block;
+
+    color:#cbd5e1;
+
+    text-decoration:none;
+
+    margin-bottom:12px;
+
+    transition:.3s;
+}
+
+.footer-box a:hover{
+    color:#00c6ff;
+
+    transform:translateX(8px);
+}
+
+.footer-bottom{
+text-align:center;
+margin-top:40px;
+padding-top:20px;
+border-top:1px solid rgba(255,255,255,0.2);
+font-size:14px;
+color:#94a3b8;
+}
+
+.badge-card{
+    text-decoration:none;
+    color:white;
+}
+
+
+.badge-card{
+    transition:0.3s;
+    cursor:pointer;
+}
+
+.badge-card:hover{
+    transform:translateY(-8px);
+    box-shadow:0 0 20px cyan;
+}
+
+.logo{
+    font-size:32px;
+    font-weight:800;
+
+    background:linear-gradient(
+        45deg,
+        #00c6ff,
+        #00ffcc,
+        white
+    );
+
+    background-clip:text;
+    -webkit-background-clip:text;
+
+    color:transparent;
+    -webkit-text-fill-color:transparent;
+
+    letter-spacing:1px;
+}
+
+
+.hero-title{
+    font-size:72px;
+    font-weight:800;
+    text-align:center;
+    line-height:1.1;
+
+    background:linear-gradient(
+        45deg,
+        #00c6ff,
+        #00ffcc,
+        #ffffff
+    );
+
+    background-clip:text;
+    -webkit-background-clip:text;
+
+    color:transparent;
+    -webkit-text-fill-color:transparent;
+
+    text-shadow:0 0 30px rgba(0,198,255,.3);
+}
+
+.card{
+
+    width:300px;
+
+    padding:35px;
+
+    border-radius:20px;
+
+    background:white;
+
+    border:1px solid #e5e7eb;
+
+    box-shadow:
+    0 10px 30px rgba(0,0,0,.08);
+
+    text-align:center;
+
+    transition:all .3s ease;
+}
+
+.card:hover{
+
+    transform:translateY(-10px);
+
+    box-shadow:
+    0 20px 40px rgba(0,0,0,.15);
+
+    border-color:#a435f0;
+}
+
+.progress-bar{
+
+    width:100%;
+
+    height:14px;
+
+    background:#e5e7eb;
+
+    border-radius:20px;
+
+    overflow:hidden;
+
+    margin-top:20px;
+}
+
+.progress-fill{
+
+    width:75%;
+
+    height:100%;
+
+    background:linear-gradient(
+        90deg,
+        #a435f0,
+        #8710d8
+    );
+
+    border-radius:20px;
+
+    color:white;
+
+    font-size:11px;
+
+    font-weight:bold;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+}
+    </style>
+</head>
+
+<body>
+
+    <div class="announcement-bar">
+
+    <marquee>
+        🔥 New AI Courses Added |
+        🎉 50% OFF on Full Stack Courses |
+        🚀 Certificates Available |
+        🤖 AI Quiz System Live
+    </marquee>
+
+</div>
+    
+
+<!-- Navbar -->
+<div class="navbar">
+    <h2 class="logo">
+LMS PRO 🚀
+</h2>
+    <div>
+        <a href="/login">Login</a>
+        <a href="/register">Register</a>
+    </div>
+</div>
+
+<!-- Hero Section -->
+<div class="hero">
+
+   <h1 class="hero-title">
+    Learn Smarter With LMS PRO 🚀
+</h1>
+
+    <p>
+        Explore top courses in AI, Web Development,
+        Data Science, Cyber Security and more.
+    </p>
+
+    <form action="/" method="GET">
+
+        <input
+            type="text"
+            name="search"
+            placeholder="Search for courses..."
+            style="
+            width:60%;
+            padding:15px;
+            border-radius:30px;
+            border:none;
+            margin-top:20px;
+            font-size:16px;
+            ">
+
+        <br>
+
+        <button type="submit"
+style="
+margin-top:20px;
+padding:12px 30px;
+border:none;
+border-radius:30px;
+background:linear-gradient(45deg,#00c6ff,#0072ff);
+color:white;
+font-size:16px;
+font-weight:bold;
+cursor:pointer;
+box-shadow:0 0 15px rgba(0,198,255,0.5);
+transition:0.3s;
+">
+🔍 Search Courses
+</button>
+    </form>
+
+</div>
+
+<h2 style="
+padding-left:40px;
+margin-top:30px;
+font-size:32px;
+">
+<div style="
+display:flex;
+justify-content:center;
+gap:15px;
+flex-wrap:wrap;
+margin-top:30px;
+margin-bottom:20px;
+">
+
+<a href="/?category=Python">
+<button class="cat-btn">Python</button>
+</a>
+
+<a href="/?category=AI">
+<button class="cat-btn">AI</button>
+</a>
+
+<a href="/?category=Web">
+<button class="cat-btn">Web Dev</button>
+</a>
+
+<a href="/?category=Java">
+<button class="cat-btn">Java</button>
+</a>
+
+<a href="/">
+<button class="cat-btn">All Courses</button>
+</a>
+
+</div>
+
+<h2 style="
+padding-left:40px;
+margin-top:30px;
+font-size:32px;
+">
+<section class="categories-section">
+
+    <section class="stats-section">
+
+    <div class="stats-container">
+
+        <a href="/register" class="stat-box">
+    <h2>10K+</h2>
+    <p>Students</p>
+</a>
+
+        <a href="/courses" class="stat-box">
+    <h2>120+</h2>
+    <p>Courses</p>
+</a>
+
+        <a href="/courses" class="stat-box">
+    <h2>4.9★</h2>
+    <p>Rating</p>
+</a>
+
+        <a href="/my_courses" class="stat-box">
+    <h2>24/7</h2>
+    <p>Support</p>
+</a>
+
+    </div>
+
+</section>
+    <h2 class="section-title">🔥 Top Categories</h2>
+
+    <div class="categories-container">
+
+        <a href="/courses?category=python" class="category-card category-link">
+            <h3>🐍 Python</h3>
+            <p>Learn Python from beginner to advanced.</p>
+        </a>
+
+        <a href="/courses?category=ai" class="category-card category-link">
+            <h3>🤖 AI & ML</h3>
+            <p>Explore Artificial Intelligence tools.</p>
+        </a>
+
+        <a href="/courses?category=web" class="category-card category-link">
+            <h3>🌐 Web Development</h3>
+            <p>Frontend + Backend full stack development.</p>
+        </a>
+
+        <a href="/courses?category=cyber" class="category-card category-link">
+            <h3>🔐 Cyber Security</h3>
+            <p>Ethical hacking and security fundamentals.</p>
+        </a>
+
+        <a href="/courses?category=data" class="category-card category-link">
+            <h3>📊 Data Science</h3>
+            <p>Data analysis and visualization courses.</p>
+       </a>
+
+    </div>
+
+</section>
+
+<section class="reviews-section">
+
+    <h2 class="section-title">💬 Student Reviews</h2>
+
+    <div class="reviews-container">
+
+        <div class="review-card">
+            <h3>⭐⭐⭐⭐⭐</h3>
+            <p>
+                Best LMS for learning Python and AI.
+            </p>
+            
+        </div>
+
+        <div class="review-card">
+            <h3>⭐⭐⭐⭐⭐</h3>
+            <p>
+                Very interactive quizzes and projects.
+            </p>
+    
+        </div>
+
+        <div class="review-card">
+            <h3>⭐⭐⭐⭐⭐</h3>
+            <p>
+                The certificate system is amazing.
+            </p>
+        
+        </div>
+
+    </div>
+
+</section>
+
+<section class="instructors-section">
+
+    <h2 class="section-title">👨‍🏫 Top Instructors</h2>
+
+    <div class="instructors-container">
+
+        <div class="instructor-card">
+            <img src="https://i.pravatar.cc/150?img=11">
+
+            <h3>Rahul Sharma</h3>
+
+            <p>Full Stack Developer</p>
+        </div>
+
+        <div class="instructor-card">
+            <img src="https://i.pravatar.cc/150?img=47">
+
+            <h3>Priya Singh</h3>
+
+            <p>AI & Machine Learning Expert</p>
+        </div>
+
+        <div class="instructor-card">
+            <img src="https://i.pravatar.cc/150?img=12">
+
+            <h3>Aman Verma</h3>
+
+            <p>Cyber Security Specialist</p>
+        </div>
+
+    </div>
+
+</section>
+🔥 Trending Courses
+</h2>
+
+<section class="badges-section">
+
+    <h2 class="section-title">
+        🏆 Student Achievements
+    </h2>
+
+    <div class="badges-container">
+
+        <a href="/courses" class="badge-card">
+    🥇 Top Performer
+</a>
+
+        <a href="/courses" class="badge-card">
+    🚀 Fast Learner
+</a>
+
+        <a href="/quiz/1" class="badge-card">
+    🎯 Quiz Master
+</a>
+
+        <a href="/my_courses" class="badge-card">
+    🔥 AI Expert
+</a>
+    </div>
+
+</section>
+
+<section class="stats-section">
+
+    <div class="stats-box">
+        <h1>12K+</h1>
+        <p>Students</p>
+    </div>
+
+    <div class="stats-box">
+        <h1>250+</h1>
+        <p>Courses</p>
+    </div>
+
+    <div class="stats-box">
+        <h1>8K+</h1>
+        <p>Certificates</p>
+    </div>
+
+    <div class="stats-box">
+        <h1>95%</h1>
+        <p>Placements</p>
+    </div>
+
+</section>
+
+<section class="testimonial-section">
+
+<h2 class="section-title">
+💬 Student Reviews
+</h2>
+
+<div class="testimonial-container">
+
+<div class="testimonial-card">
+⭐⭐⭐⭐⭐
+<p>
+"This LMS completely changed my coding journey!"
+</p>
+<h4>- Rahul Sharma</h4>
+</div>
+
+<div class="testimonial-card">
+⭐⭐⭐⭐⭐
+<p>
+"Best platform for AI and Web Development."
+</p>
+<h4>- Priya Singh</h4>
+</div>
+
+<div class="testimonial-card">
+⭐⭐⭐⭐⭐
+<p>
+"Courses are very practical and beginner friendly."
+</p>
+<h4>- Aman Verma</h4>
+</div>
+
+</div>
+
+</section>
+
+
+<section class="cta-section">
+
+<h1>
+🚀 Start Learning Today
+</h1>
+
+<p>
+Join thousands of students and level up your career with LMS PRO.
+</p>
+
+<a href="/register">
+
+<button class="cta-btn">
+Get Started
+</button>
+
+</a>
+
+</section>
+
+<div class="course-container">
+
+{% for c in courses %}
+<div class="course-card">
+    <div class="wishlist-btn">❤</div>
+
+    <div class="wishlist-btn"
+    onclick="toggleHeart(this)">
+    ❤
+    </div>
+{% if c.video_url %}
+<img
+src="{{ c.video_url }}"
+class="course-video">
+
+<video class="hover-video" muted loop>
+
+    <source src="/uploads/python-preview.mp4"
+    type="video/mp4">
+
+</video>
+
+{% endif %}
+    <h3>{{ c.title }}</h3>
+    <span class="course-badge">
+🔥 BESTSELLER
+</span>
+
+    <p>{{ c.description if c.description else 'No description available' }}</p>
+
+<p style="color:#facc15; margin:5px 0;">
+⭐ 4.8 | 👨‍🎓 12k Students
+</p>
+
+    <p style="color:#22c55e;">₹499</p>
+    <p class="offer-timer">
+⏳ Offer Ends In: 02:15:20
+</p>
+
+    
+        <button class="preview-btn"
+onclick="openPreview('{{ c.video_url }}')">
+
+🎥 Preview
+
+</button>
+       <button class="enroll-btn"
+onclick="payNow()">
+
+Buy Course
+
+</button>
+        <div class="progress-container">
+
+    <div class="progress-bar"></div>
+
+</div>
+
+<p class="progress-text">
+70% Completed
+</p>
+    </a>
+
+</div>
+{% endfor %}
+
+<div style="
+display:flex;
+justify-content:center;
+gap:30px;
+margin-top:10px;
+margin-bottom:40px;
+flex-wrap:wrap;
+">
+    
+
+    <a href="/dashboard" style="text-decoration:none; color:white;">
+<div class="card">
+   <h3 style="color:#1c1d1f;">📝 Assignments</h3>
+    <p style="color:#6a6f73;">Practice and submit work easily</p>
+</div>
+</a>
+    <a href="/dashboard" style="text-decoration:none; color:white;">
+
+    <div class="card">
+
+        <h3 style="color:#1c1d1f;">📊 Progress</h3>
+
+        <p style="color:#6a6f73;">
+            Track your learning journey
+        </p>
+
+        <div class="progress-bar">
+
+            <div class="progress-fill">
+                75%
+            </div>
+
+        </div>
+
+    </div>
+
+</a>
+
+</div>
+
+<section class="features">
+
+<h1>Why Choose LMS PRO 🚀</h1>
+
+<div class="feature-container">
+
+        <a href="/courses" class="feature-link">
+          <div class="feature-box">
+          <h2>📹 Live Classes</h2>
+          <p>Attend interactive live coding sessions.</p>
+    </div>
+ </a>
+
+        <a href="/quiz/1" class="feature-link">
+        <div class="feature-box">
+            <h2>🤖 AI Quiz</h2>
+            <p>Automatically generated quizzes using AI.</p>
+        </div>
+    </a>
+        <a href="/my_courses" class="feature-link">
+
+<div class="feature-box">
+    <h2>📜 Certificates</h2>
+    <p>Get certificates after course completion.</p>
+</div>
+
+</a>
+
+        <a href="/courses" class="feature-link">
+    <div class="feature-box">
+    <h2>💻 Real Projects</h2>
+    <p>Build industry-level real world projects.</p>
+</div>
+
+</a>
+
+    </div>
+
+</section>
+
+<section class="newsletter-section">
+
+    <h2>📩 Subscribe For Updates</h2>
+
+    <p>
+        Get latest courses, AI tools and coding updates directly in your inbox.
+    </p>
+
+    <form class="newsletter-form">
+
+        <input type="email" placeholder="Enter your email">
+
+        <button type="submit">
+            Subscribe
+        </button>
+
+    </form>
+
+</section>
+
+
+<div id="previewModal" class="preview-modal">
+
+    <div class="preview-content">
+
+        <span class="close-btn"
+        onclick="closePreview()">
+        &times;
+        </span>
+
+        <iframe id="previewFrame"
+        src=""
+        frameborder="0"
+        allowfullscreen>
+        </iframe>
+
+    </div>
+
+</div>
+
+<script>
+
+function openPreview(videoUrl){
+
+    document.getElementById("previewModal").style.display = "flex";
+
+    document.getElementById("previewFrame").src = videoUrl;
+
+}
+
+function closePreview(){
+
+    document.getElementById("previewModal").style.display = "none";
+
+    document.getElementById("previewFrame").src = "";
+
+}
+
+</script>
+
+<script>
+
+function toggleHeart(element){
+
+    element.classList.toggle("active");
+
+}
+
+</script>
+
+<div class="ai-chat-btn">
+🤖
+</div>
+
+<script>
+
+document.querySelectorAll('.course-card').forEach(card => {
+
+    const video = card.querySelector('.hover-video');
+
+    card.addEventListener('mouseenter', () => {
+        video.play();
+    });
+
+    card.addEventListener('mouseleave', () => {
+        video.pause();
+        video.currentTime = 0;
+    });
+
+});
+
+</script>
+
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+<script>
+
+function payNow(){
+
+var options = {
+
+"key": "rzp_live_SSgm493FHbxcNw",
+
+"amount": 49900,
+
+"currency": "INR",
+
+"name": "LMS PRO",
+
+"description": "Course Purchase",
+
+"handler": function (response){
+
+alert("Payment Successful 😎🔥");
+
+window.location.href="/dashboard";
+
+}
+
+};
+
+var rzp1 = new Razorpay(options);
+
+rzp1.open();
+
+}
+
+</script>
+
+<footer class="footer">
+
+<div class="footer-container">
+
+<div class="footer-box">
+<h2>LMS PRO 🚀</h2>
+<p>
+Learn AI, Web Development, Python,
+Cyber Security and more with industry level courses.
+</p>
+</div>
+
+<div class="footer-box">
+<h3>Quick Links</h3>
+<a href="/">Home</a>
+<a href="/courses">Courses</a>
+<a href="/login">Login</a>
+<a href="/register">Register</a>
+</div>
+
+<div class="footer-box">
+<h3>Top Courses</h3>
+<p>Python Development</p>
+<p>Machine Learning</p>
+<p>React Advanced</p>
+<p>Cyber Security</p>
+</div>
+
+<div class="footer-box">
+<h3>Contact</h3>
+<p>📧 support@lmspro.com</p>
+<p>📱 +91 9876543210</p>
+<p>🌍 India</p>
+</div>
+
+</div>
+
+<div class="footer-bottom">
+© 2026 LMS PRO | All Rights Reserved 😎🔥
+</div>
+
+</footer>
+</body>
+</html>

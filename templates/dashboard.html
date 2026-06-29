@@ -1,0 +1,165 @@
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <title>Dashboard</title>
+
+        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+        <style>
+            body {
+                margin: 0;
+                font-family: 'Poppins', sans-serif;
+                background: #0f2027;
+                color: white;
+            }
+
+            .navbar {
+                background: #111;
+                padding: 15px;
+                display: flex;
+                justify-content: space-between;
+            }
+
+            .navbar a {
+                color: #00c6ff;
+                text-decoration: none;
+                margin-left: 15px;
+            }
+
+            .container {
+                padding: 30px;
+            }
+
+            .card {
+                background: rgba(255,255,255,0.08);
+                padding: 20px;
+                margin: 15px 0;
+                border-radius: 15px;
+                box-shadow: 0 0 10px rgba(0,150,255,0.3);
+            }
+
+            .progress {
+                background: #333;
+                border-radius: 10px;
+                overflow: hidden;
+            }
+
+            .progress-bar {
+                height: 10px;
+                background: #00c6ff;
+            }
+
+            button {
+                padding: 8px 15px;
+                border: none;
+                border-radius: 20px;
+                background: #00c6ff;
+                color: white;
+                cursor: pointer;
+            }
+        </style>
+    </head>
+
+    <body>
+        <h1 style="color:red;">THIS IS DASHBOARD FILE</h1>
+
+    <!-- 🔝 Navbar -->
+    <div class="navbar">
+        <div><strong>LMS Dashboard</strong></div>
+
+        <div>
+            Welcome, {{ user_name }} |
+            <a href="/courses">Browse Courses</a>
+            <a href="/add-course">Add Course</a>
+            <a href="/logout">Logout</a>
+        </div>
+    </div>
+
+    <!-- 📦 Content -->
+    <div class="container">
+
+        <!-- 📊 Progress -->
+        <div class="card">
+            <h3>Your Progress</h3>
+          <h1 style="color:yellow;">{{ progress_percent }}</h1>
+
+            <div class="progress">
+                <div class="progress-bar" id="progressBar"></div>
+            </div>
+
+           <p>{{ progress_percent }}% Completed</p>
+        </div>
+
+        <!-- 📢 Announcements -->
+        <div class="card">
+            <h3>Announcements</h3>
+            <ul>
+                {% for note in announcements %}
+                    <li>{{ note }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <!-- 📚 Enrolled Courses -->
+        <div class="card">
+            <h3>Your Courses</h3>
+
+            {% if role == 'student' %}
+        <a href="/my-marks">
+            <button style="margin-bottom:15px;">View My Marks</button>
+        </a>
+    {% endif %}
+
+            {% if courses %}
+                {% for course in courses %}
+                    <div style="margin-bottom:15px; padding-bottom:10px; border-bottom:1px solid rgba(255,255,255,0.1);">
+                
+            {% if course[5] %}
+        <iframe width="100%" height="180"
+            src="{{ course[5] }}"
+            frameborder="0"
+            allowfullscreen>
+        </iframe>
+    {% else %}
+        <p>No video available</p>
+    {% endif %}
+    <a href="/course/{{ course[0] }}" style="text-decoration:none; color:white;">
+
+        <h4>{{ course[1] }}</h4>
+    </a>
+
+   <a href="/course/{{ course.id }}" style="text-decoration:none; color:white;">              
+    <button style="margin-bottom:10px;">Open Course</button>
+</a>
+
+    <p>{{ course[2] }}</p>
+
+    <p style="color:lightgreen;">✅ Enrolled</p>
+
+    {% if role == 'student' %}
+       <a href="/assignments/{{ course.id }}">>
+    <button>Assignments</button>
+</a>
+    {% endif %}
+
+    {% if role == 'instructor' %}
+        <a href="/add-assignment/{{ course[0] }}">
+            <button>Add Assignment</button>
+        </a>
+    {% endif %}
+
+</div>
+                {% endfor %}
+            {% else %}
+                <p>No courses enrolled yet 😢</p>
+                <a href="/courses"><button>Browse Courses</button></a>
+            {% endif %}
+        </div>
+
+    </div>
+    <script>
+    let progress = Number("{{ progress_percent }}");
+    document.getElementById("progressBar").style.width = progress + "%";
+</script>
+    </body>
+    </html>
