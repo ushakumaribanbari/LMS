@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, redirect, url_for, session, f
 import sqlite3
 from datetime import datetime
 import os
+from dotenv import load_dotenv
 import mysql.connector
 import requests
 import json
@@ -9,15 +10,14 @@ import razorpay
 from werkzeug.security import generate_password_hash, check_password_hash
 
 app = Flask(__name__)
-
-RAZORPAY_KEY_ID = "rzp_live_SSgm493FHbxcNw"
-RAZORPAY_KEY_SECRET = "aC5ihNgCzFyPi35dm1qSjgzk"
+load_dotenv()
+RAZORPAY_KEY_ID = os.getenv("RAZORPAY_KEY_ID")
+RAZORPAY_KEY_SECRET = os.getenv("RAZORPAY_KEY_SECRET")
 
 client = razorpay.Client(
     auth=(RAZORPAY_KEY_ID, RAZORPAY_KEY_SECRET)
 )
-app.secret_key = "secret123"
-
+app.secret_key = os.getenv("SECRET_KEY", "dev-secret-key")
 # ✅ Upload folder config (IMPORTANT)
 UPLOAD_FOLDER = 'uploads'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
@@ -28,11 +28,11 @@ from werkzeug.security import generate_password_hash, check_password_hash
 # ---------------- DB CONNECTION ----------------
 def get_db():
     return mysql.connector.connect(
-        host="127.0.0.1",
-        user="root",
-        password="AIcore@123",
-        database="lms_db",
-        port=3306
+        host=os.getenv("DB_HOST", "127.0.0.1"),
+        user=os.getenv("DB_USER", "root"),
+        password=os.getenv("DB_PASSWORD", ""),
+        database=os.getenv("DB_NAME", "lms_db"),
+        port=int(os.getenv("DB_PORT", "3306"))
     )
 
 # ---------------- ROLE CHECK ----------------
@@ -1198,5 +1198,5 @@ def my_courses_page():
 
     return render_template("my_courses.html")
 
-if __name__ == '__main__':
-    app.run(debug=True)
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
