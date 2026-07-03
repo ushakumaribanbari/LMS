@@ -69,41 +69,33 @@ def role_required(role):
 
 @app.route('/')
 def home():
+
     conn = get_db()
     cursor = conn.cursor(dictionary=True)
 
-    category = request.args.get('category')
     search = request.args.get('search')
 
-    query = "SELECT * FROM courses WHERE video_url IS NOT NULL AND video_url != ''"
+    query = "SELECT * FROM courses"
     params = []
 
-    if category:
-        query += " AND category=%s"
-        params.append(category)
-
     if search:
-        query += " AND title LIKE %s"
+        query += " WHERE title LIKE %s"
         params.append(f"%{search}%")
 
     cursor.execute(query, tuple(params))
-
     courses = cursor.fetchall()
 
-# 🔥 NEW COURSES
     cursor.execute("SELECT * FROM courses ORDER BY id DESC LIMIT 8")
     new_courses = cursor.fetchall()
-    
-    
 
     cursor.close()
     conn.close()
 
     return render_template(
-    'home.html',
-    courses=courses,
-    new_courses=new_courses
-)
+        "home.html",
+        courses=courses,
+        new_courses=new_courses
+    )
 # ---------------- REGISTER ----------------
 @app.route('/register', methods=['GET', 'POST'])
 def register():
