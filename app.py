@@ -1,5 +1,4 @@
 from flask import Flask, render_template, request, redirect, url_for, session, flash
-import sqlite3
 from datetime import datetime
 import os
 from dotenv import load_dotenv
@@ -11,6 +10,15 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 app = Flask(__name__)
 load_dotenv()
+def get_db_connection():
+    conn = mysql.connector.connect(
+        host=os.getenv("DB_HOST"),
+        port=int(os.getenv("DB_PORT")),
+        user=os.getenv("DB_USER"),
+        password=os.getenv("DB_PASSWORD"),
+        database=os.getenv("DB_NAME")
+    )
+    return conn
 RAZORPAY_KEY_ID = os.getenv("RAZORPAY_KEY_ID")
 RAZORPAY_KEY_SECRET = os.getenv("RAZORPAY_KEY_SECRET")
 
@@ -28,11 +36,11 @@ from werkzeug.security import generate_password_hash, check_password_hash
 # ---------------- DB CONNECTION ----------------
 def get_db():
     return mysql.connector.connect(
-        host=os.getenv("DB_HOST", "127.0.0.1"),
-        user=os.getenv("DB_USER", "root"),
-        password=os.getenv("DB_PASSWORD", ""),
-        database=os.getenv("DB_NAME", "lms_db"),
-        port=int(os.getenv("DB_PORT", "3306"))
+        host=os.getenv("DB_HOST"),
+        user=os.getenv("DB_USER"),
+        password=os.getenv("DB_PASSWORD"),
+        database=os.getenv("DB_NAME"),
+        port=int(os.getenv("DB_PORT"))
     )
 
 # ---------------- ROLE CHECK ----------------
@@ -715,18 +723,19 @@ def my_courses():
 @app.route("/certificate/<int:course_id>")
 def certificate(course_id):
 
-    conn = sqlite3.connect(r"C:\Users\Deep\OneDrive\Desktop\python_ragister\lms.db")
-    conn.row_factory = sqlite3.Row
+    conn = get_db()
 
-    cursor = conn.cursor()
+    cursor = conn.cursor(dictionary=True)
 
     cursor.execute(
-    "SELECT * FROM courses WHERE id=?",
-    (course_id,)
-)
+        "SELECT * FROM courses WHERE id=%s",
+        (course_id,)
+    )
 
     course = cursor.fetchone()
     today = datetime.now().strftime("%d %B %Y")
+
+    cursor.close()
     conn.close()
 
     return f"""
@@ -849,43 +858,46 @@ onclick="window.print()">
 @app.route("/create-test-db")
 def create_test_db():
 
-    conn = sqlite3.connect("lms.db")
+    conn = get_db()
     cursor = conn.cursor()
 
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS courses (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        title TEXT
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        title VARCHAR(255)
     )
     """)
+
     cursor.execute("""
-CREATE TABLE IF NOT EXISTS quizzes (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    course_id INTEGER,
-    question TEXT,
-    option1 TEXT,
-    option2 TEXT,
-    option3 TEXT,
-    option4 TEXT,
-    correct_answer TEXT
-)
-""")
+    CREATE TABLE IF NOT EXISTS quizzes (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        course_id INT,
+        question TEXT,
+        option1 TEXT,
+        option2 TEXT,
+        option3 TEXT,
+        option4 TEXT,
+        correct_answer TEXT
+    )
+    """)
+
     cursor.execute("""
-CREATE TABLE IF NOT EXISTS quiz_results (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    user_id INTEGER,
-    course_id INTEGER,
-    score INTEGER,
-    passed INTEGER
-)
-""")
+    CREATE TABLE IF NOT EXISTS quiz_results (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        user_id INT,
+        course_id INT,
+        score INT,
+        passed TINYINT(1)
+    )
+    """)
 
     cursor.execute("""
     INSERT INTO courses (title)
-    VALUES ('Python Course')
-    """)
+    VALUES (%s)
+    """, ("Python Course",))
 
     conn.commit()
+    cursor.close()
     conn.close()
 
     return "DB Created"
@@ -893,37 +905,33 @@ CREATE TABLE IF NOT EXISTS quiz_results (
 @app.route("/tables")
 def tables():
 
-    conn = sqlite3.connect("lms.db")
+    conn = get_db()
     cursor = conn.cursor()
 
-    cursor.execute("""
-    SELECT name FROM sqlite_master
-    WHERE type='table'
-    """)
+    cursor.execute("SHOW TABLES")
 
     tables = cursor.fetchall()
 
+    cursor.close()
     conn.close()
 
     return str(tables)
-
 @app.route("/quiz/<int:course_id>", methods=["GET", "POST"])
 def quiz(course_id):
 
-    conn = sqlite3.connect("lms.db")
-    conn.row_factory = sqlite3.Row
+    conn = get_db()
 
-    cursor = conn.cursor()
+    cursor = conn.cursor(dictionary=True)
 
     cursor.execute(
-    """
-    SELECT * FROM quizzes
-WHERE course_id=?
-ORDER BY RANDOM()
-LIMIT 50
-    """,
-    (course_id,)
-)
+        """
+        SELECT * FROM quizzes
+        WHERE course_id=%s
+        ORDER BY RAND()
+        LIMIT 50
+        """,
+        (course_id,)
+    )
 
     quizzes = cursor.fetchall()
 
@@ -952,7 +960,7 @@ LIMIT 50
         INSERT INTO results
         (student_id, course_id, score, total, status)
 
-        VALUES (?, ?, ?, ?, ?)
+VALUES (%s, %s, %s, %s, %s)
         """, (
             1,
             course_id,
@@ -996,18 +1004,18 @@ LIMIT 50
 @app.route("/my-results")
 def my_results():
 
-    conn = sqlite3.connect("lms.db")
-    conn.row_factory = sqlite3.Row
+    conn = get_db()
 
-    cursor = conn.cursor()
+    cursor = conn.cursor(dictionary=True)
 
     cursor.execute("""
-    SELECT * FROM results
-    WHERE student_id=?
+        SELECT * FROM results
+        WHERE student_id=%s
     """, (1,))
 
     results = cursor.fetchall()
 
+    cursor.close()
     conn.close()
 
     return render_template(
@@ -1018,15 +1026,14 @@ def my_results():
 @app.route("/student-dashboard")
 def student_dashboard():
 
-    conn = sqlite3.connect("lms.db")
-    conn.row_factory = sqlite3.Row
+    conn = get_db()
 
-    cursor = conn.cursor()
+    cursor = conn.cursor(dictionary=True)
 
     # RESULTS
     cursor.execute("""
     SELECT * FROM results
-    WHERE student_id=?
+    WHERE student_id=%s
     """, (1,))
 
     results = cursor.fetchall()
@@ -1049,21 +1056,22 @@ def student_dashboard():
 @app.route("/create-results-table")
 def create_results_table():
 
-    conn = sqlite3.connect("lms.db")
+    conn = get_db()
     cursor = conn.cursor()
 
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS results (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        student_id INTEGER,
-        course_id INTEGER,
-        score INTEGER,
-        total INTEGER,
-        status TEXT
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        student_id INT,
+        course_id INT,
+        score INT,
+        total INT,
+        status VARCHAR(50)
     )
     """)
 
     conn.commit()
+    cursor.close()
     conn.close()
 
     return "Results Table Created"
@@ -1074,7 +1082,6 @@ def generate_ai_quiz(course_name, course_id):
 
     import requests
     import json
-    import sqlite3
 
     prompt = f"""
     Generate 50 MCQ quiz questions for {course_name} course.
@@ -1097,7 +1104,7 @@ def generate_ai_quiz(course_name, course_id):
         "https://openrouter.ai/api/v1/chat/completions",
 
         headers={
-            "Authorization": "Bearer YOUR_API_KEY",
+"Authorization": f"Bearer {os.getenv('OPENROUTER_API_KEY')}",
             "HTTP-Referer": "http://localhost:5000",
             "X-Title": "My LMS",
             "Content-Type": "application/json"
@@ -1127,12 +1134,10 @@ def generate_ai_quiz(course_name, course_id):
 
     print(text)
 
-    # CLEAN RESPONSE
     text = text.replace("```json", "")
     text = text.replace("```", "")
     text = text.strip()
 
-    # SAFE JSON LOAD
     try:
         quizzes = json.loads(text)
 
@@ -1141,8 +1146,7 @@ def generate_ai_quiz(course_name, course_id):
         print(text)
         return
 
-    conn = sqlite3.connect("lms.db")
-
+    conn = get_db()
     cursor = conn.cursor()
 
     for quiz in quizzes:
@@ -1151,7 +1155,7 @@ def generate_ai_quiz(course_name, course_id):
         INSERT INTO quizzes
         (course_id, question, option1, option2, option3, option4, correct_answer)
 
-        VALUES (?, ?, ?, ?, ?, ?, ?)
+        VALUES (%s, %s, %s, %s, %s, %s, %s)
         """, (
             course_id,
             quiz["question"],
@@ -1163,40 +1167,39 @@ def generate_ai_quiz(course_name, course_id):
         ))
 
     conn.commit()
+    cursor.close()
     conn.close()
 
     print("50 AI quizzes added successfully")
 
-generate_ai_quiz("Python", 1)
 
+# @app.route("/quiz/<int:course_id>")
+# def quiz_page(course_id):
 
-@app.route("/quiz/<int:course_id>")
-def quiz_page(course_id):
+#     conn = get_db()
 
-    conn = get_db()
+#     cursor = conn.cursor(dictionary=True)
 
-    cursor = conn.cursor(dictionary=True)
+#     cursor.execute(
+#         "SELECT * FROM quizzes WHERE course_id=%s ORDER BY RAND() LIMIT 100",
+#         (course_id,)
+#     )
 
-    cursor.execute(
-        "SELECT * FROM quizzes WHERE course_id=%s ORDER BY RAND() LIMIT 100",
-        (course_id,)
-    )
+#     quizzes = cursor.fetchall()
 
-    quizzes = cursor.fetchall()
+#     conn.close()
 
-    conn.close()
-
-    return render_template(
-        "quiz.html",
-        quizzes=quizzes
-    )
+#     return render_template(
+#         "quiz.html",
+#         quizzes=quizzes
+#     )
 
 
 
-@app.route("/my_courses")
-def my_courses_page():
+# @app.route("/my_courses")
+# def my_courses_page():
 
-    return render_template("my_courses.html")
+#     return render_template("my_courses.html")
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
