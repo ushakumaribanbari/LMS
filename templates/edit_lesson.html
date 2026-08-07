@@ -1,0 +1,194 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Lesson{% endblock %}
+{% block nav_title %}Edit Lesson{% endblock %}
+
+{% block content %}
+
+<div class="section-card" style="max-width:900px;margin:auto;">
+
+    <h2 class="section-title">✏ Edit Lesson</h2>
+
+<form method="POST" enctype="multipart/form-data">
+    <label style="display:block;margin-bottom:8px;font-weight:bold;">
+        Lesson Title
+    </label>
+
+    <input
+        type="text"
+        name="title"
+        value="{{ lesson.title }}"
+        required
+        style="
+        width:100%;
+        padding:14px;
+        border-radius:10px;
+        border:1px solid #475569;
+        background:#0f172a;
+        color:white;
+        font-size:16px;
+        margin-bottom:20px;">
+
+    <label style="display:block;margin-bottom:8px;font-weight:bold;">
+        Description
+    </label>
+
+    <textarea
+        name="description"
+        rows="6"
+        style="
+        width:100%;
+        padding:14px;
+        border-radius:10px;
+        border:1px solid #475569;
+        background:#0f172a;
+        color:white;
+        font-size:16px;
+        margin-bottom:20px;">{{ lesson.description }}</textarea>
+
+    <label style="display:block;margin-bottom:8px;font-weight:bold;">
+        YouTube URL
+    </label>
+
+    <input
+        type="text"
+        name="youtube_url"
+        value="{{ lesson.youtube_url }}"
+        style="
+        width:100%;
+        padding:14px;
+        border-radius:10px;
+        border:1px solid #475569;
+        background:#0f172a;
+        color:white;
+        font-size:16px;
+        margin-bottom:20px;">
+
+    <label style="display:block;margin-bottom:8px;font-weight:bold;">
+        Lesson Order
+    </label>
+
+    <input
+        type="number"
+        name="lesson_order"
+        value="{{ lesson.lesson_order }}"
+        style="
+        width:100%;
+        padding:14px;
+        border-radius:10px;
+        border:1px solid #475569;
+        background:#0f172a;
+        color:white;
+        font-size:16px;
+        margin-bottom:30px;">
+
+        <hr style="margin:30px 0;border-color:#334155;">
+
+<label style="display:block;margin-bottom:8px;font-weight:bold;">
+📄 Current PDF
+</label>
+
+{% if lesson.pdf_file %}
+<p style="color:#22c55e;">{{ lesson.pdf_file }}</p>
+{% else %}
+<p style="color:#ef4444;">No PDF Uploaded</p>
+{% endif %}
+
+<input type="hidden" name="old_pdf" value="{{ lesson.pdf_file }}">
+
+<label style="display:block;margin-bottom:8px;font-weight:bold;">
+Upload New PDF
+</label>
+
+<input
+type="file"
+name="pdf_file"
+accept=".pdf"
+style="
+width:100%;
+padding:12px;
+border:1px solid #475569;
+border-radius:10px;
+background:#0f172a;
+color:white;
+margin-bottom:25px;">
+
+<label style="display:block;margin-bottom:8px;font-weight:bold;">
+📊 Current PPT
+</label>
+
+{% if lesson.ppt_file %}
+<p style="color:#22c55e;">{{ lesson.ppt_file }}</p>
+{% else %}
+<p style="color:#ef4444;">No PPT Uploaded</p>
+{% endif %}
+
+<input type="hidden" name="old_ppt" value="{{ lesson.ppt_file }}">
+
+<label style="display:block;margin-bottom:8px;font-weight:bold;">
+Upload New PPT
+</label>
+
+<input
+type="file"
+name="ppt_file"
+accept=".ppt,.pptx"
+style="
+width:100%;
+padding:12px;
+border:1px solid #475569;
+border-radius:10px;
+background:#0f172a;
+color:white;
+margin-bottom:30px;">
+
+<hr style="margin:30px 0;">
+
+<label>🧠 Upload New Quiz DOCX</label><br>
+
+<input
+type="file"
+name="quiz_docx"
+accept=".doc,.docx"
+style="width:100%;padding:10px;margin:10px 0;">
+
+<small style="color:#94a3b8;">
+Upload a .doc or .docx file to replace the existing quiz.
+</small>
+
+<br><br>
+
+    <button
+        type="submit"
+        style="
+        background:#22c55e;
+        color:white;
+        border:none;
+        padding:14px 28px;
+        border-radius:10px;
+        font-size:16px;
+        cursor:pointer;
+        margin-right:10px;">
+
+        💾 Save Changes
+
+    </button>
+
+    <a
+        href="/manage-course/{{ lesson.course_id }}"
+        style="
+        background:#475569;
+        color:white;
+        text-decoration:none;
+        padding:14px 28px;
+        border-radius:10px;">
+
+        Cancel
+
+    </a>
+
+</form>
+
+</div>
+
+{% endblock %}

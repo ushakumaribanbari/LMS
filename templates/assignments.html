@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block title %}Assignments — LMS Pro{% endblock %}
+{% block nav_title %}Assignments{% endblock %}
+
+{% block content %}
+<section class="hero page-hero-compact">
+    <div class="hero-text">
+        <p class="hero-greeting">Your Tasks</p>
+        <h1 class="hero-title">Assignments</h1>
+        <p class="hero-subtitle">View and submit your course assignments, {{ user_name }}.</p>
+    </div>
+    <div class="hero-illustration">
+        <div class="hero-ring">
+            <div class="hero-ring-inner">📝</div>
+        </div>
+    </div>
+</section>
+
+<div class="section-card">
+    <div class="section-header">
+        <h3 class="section-title">All Assignments</h3>
+        <span class="category-badge">{{ assignments|length }} total</span>
+    </div>
+
+    {% if assignments %}
+    <div class="courses-grid">
+        {% for item in assignments %}
+        <div class="assignment-card" data-searchable>
+            <div class="assignment-body">
+                <div class="course-meta">
+                    <span class="category-badge">{{ item.course_title or 'Course' }}</span>
+                    {% if item.submitted %}
+                    <span style="font-size:11px;color:var(--success);font-weight:600;">✅ Submitted</span>
+                    {% else %}
+                    <span style="font-size:11px;color:var(--warning);font-weight:600;">Pending</span>
+                    {% endif %}
+                </div>
+                <h4 class="assignment-title">{{ item.title }}</h4>
+                <p class="assignment-desc">Assignment for {{ item.course_title or 'your course' }}.</p>
+
+                {% if role == 'student' and not item.submitted %}
+                <form class="submit-form" method="POST" action="/submit/{{ item.id }}" enctype="multipart/form-data">
+                    <input type="file" name="file" required>
+                    <button type="submit">Submit</button>
+                </form>
+                {% elif role == 'student' and item.submitted %}
+                <p style="font-size:12px;color:var(--muted);margin-top:8px;">File: {{ item.file }}</p>
+                {% elif role == 'instructor' %}
+                <div class="assignment-actions">
+                    <a href="/submissions/{{ item.id }}" class="btn-secondary">View Submissions</a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <p>No assignments found. Enroll in a course to see assignments.</p>
+        <a href="/courses" class="btn-primary" style="display:inline-block;max-width:220px;">Browse Courses</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

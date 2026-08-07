@@ -1,0 +1,11 @@
+Flask==3.0.3
+gunicorn==23.0.0
+mysql-connector-python==9.0.0
+requests==2.32.3
+razorpay==2.0.1
+Werkzeug==3.0.3
+python-dotenv==1.0.1
+setuptools>=75.0.0
+python-dateutil==2.9.0.post0
+reportlab==4.2.2
+python-docx==1.1.2

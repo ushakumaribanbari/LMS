@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ course.title }}</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+</head>
+
+<body style="background:#0f2027; color:white; padding:30px; font-family:Arial,sans-serif;">
+
+<div style="max-width:1200px; margin:auto;">
+
+    <h1>{{ course.title }}</h1>
+
+    <p>{{ course.description }}</p>
+
+    <h3>Progress: {{ progress_percent or 0 }}%</h3>
+
+    {% if progress_percent == 100 %}
+    <a href="/certificate/{{ course.id }}">
+        <button style="
+            margin-bottom:20px;
+            padding:12px 25px;
+            border:none;
+            border-radius:30px;
+            background:#22c55e;
+            color:white;
+            cursor:pointer;
+            font-size:16px;">
+            🎓 Download Certificate
+        </button>
+    </a>
+    {% endif %}
+
+    <!-- Progress Bar -->
+
+    <div style="
+        width:100%;
+        background:#334155;
+        height:10px;
+        border-radius:10px;
+        overflow:hidden;
+        margin-bottom:30px;">
+
+        <div id="progressBar"
+             style="
+             height:10px;
+             width:0%;
+             background:#22c55e;">
+        </div>
+
+    </div>
+
+    <script>
+        let progress = parseInt("{{ progress_percent or 0 }}");
+        document.getElementById("progressBar").style.width = progress + "%";
+    </script>
+
+
+    <div style="
+        display:flex;
+        gap:30px;
+        align-items:flex-start;
+        flex-wrap:wrap;">
+
+        <!-- LEFT SIDE -->
+
+        <div style="flex:2; min-width:650px;">
+
+            {% if lessons %}
+
+<iframe
+    id="mainVideo"
+    width="100%"
+    height="500"
+    style="
+    border:none;
+    border-radius:20px;
+    box-shadow:0 10px 30px rgba(0,0,0,.5);"
+    src="{{ lessons[0].youtube_url }}"
+    allowfullscreen>
+</iframe>
+
+<!-- PDF Overlay -->
+
+<div id="pdfOverlay" style="
+display:none;
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,.7);
+backdrop-filter:blur(8px);
+justify-content:center;
+align-items:center;
+z-index:9999;
+">
+
+    <div style="
+    width:92%;
+    height:92%;
+    position:relative;
+    background:#111827;
+    border-radius:15px;
+    overflow:hidden;">
+
+        <button onclick="closePDF()"
+        style="
+        position:absolute;
+        top:15px;
+        right:20px;
+        z-index:1000;
+        background:red;
+        color:white;
+        border:none;
+        width:45px;
+        height:45px;
+        border-radius:50%;
+        font-size:22px;
+        cursor:pointer;">
+        ✕
+        </button>
+
+        <div style="
+width:100%;
+height:100%;
+display:flex;
+flex-direction:column;
+background:#111827;">
+
+    <!-- Toolbar -->
+
+    <div style="
+    height:70px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:15px;
+    background:#1f2937;
+    border-bottom:1px solid #374151;">
+
+        <span id="pageInfo">1 / 1</span>
+
+        <button onclick="zoomOut()">➖</button>
+
+        <button onclick="zoomIn()">➕</button>
+
+
+    </div>
+
+    <div style="
+    flex:1;
+    overflow:auto;
+    display:flex;
+    justify-content:center;
+    align-items:flex-start;
+    padding:30px;">
+
+        <canvas
+            id="pdfCanvas"
+            style="
+            background:white;
+            box-shadow:0 10px 30px rgba(0,0,0,.5);
+            border-radius:10px;">
+        </canvas>
+
+
+        <!-- Previous Button -->
+
+<button
+id="prevBtn"
+onclick="prevPage()"
+style="
+position:absolute;
+left:25px;
+top:50%;
+transform:translateY(-50%);
+width:55px;
+height:55px;
+border:none;
+border-radius:50%;
+background:#2563eb;
+color:white;
+font-size:22px;
+cursor:pointer;
+box-shadow:0 8px 20px rgba(0,0,0,.35);
+z-index:999;">
+❮
+</button>
+
+<!-- Next Button -->
+
+<button
+id="nextBtn"
+onclick="nextPage()"
+style="
+position:absolute;
+right:25px;
+top:50%;
+transform:translateY(-50%);
+width:55px;
+height:55px;
+border:none;
+border-radius:50%;
+background:#2563eb;
+color:white;
+font-size:22px;
+cursor:pointer;
+box-shadow:0 8px 20px rgba(0,0,0,.35);
+z-index:999;">
+❯
+</button>
+
+    </div>
+
+</div>
+
+    </div>
+
+</div>
+
+<br><br>
+
+
+
+{% else %}
+
+<p>No lessons available.</p>
+
+{% endif %}
+
+            <br><br>
+        <!--
+            <a href="/quiz/{{ course_id }}">
+                <button style="
+                    background:#00c853;
+                    color:white;
+                    border:none;
+                    padding:12px 25px;
+                    border-radius:8px;
+                    cursor:pointer;
+                    font-size:16px;">
+                    🧠 Start AI Quiz
+                </button>
+            </a>
+        -->
+        </div>
+
+
+        <!-- RIGHT SIDE -->
+
+        <div style="
+            flex:1;
+            min-width:300px;
+            background:#1e293b;
+            padding:20px;
+            border-radius:15px;">
+
+            <div style="margin-bottom:30px;">
+
+    {% if lessons %}
+
+   
+
+    {% else %}
+
+    <h3>No lessons available.</h3>
+
+    {% endif %}
+
+</div>
+
+            <h2>📚 Course Content</h2>
+
+        {% for lesson in lessons %}
+
+<div
+style="
+background:#334155;
+margin-bottom:15px;
+padding:15px;
+border-radius:12px;
+    /* {% if lesson.locked %} */
+    opacity:.6;
+    cursor:not-allowed;
+    /* {% else %} */
+    cursor:pointer;
+    /* {% endif %} */
+    ">
+
+    {% if lesson.locked %}
+
+        <b>🔒 {{ lesson.title }}</b>
+
+        <br><br>
+
+        <span style="color:#fbbf24;">
+            Complete previous lesson quiz to unlock.
+        </span>
+
+    {% else %}
+
+        <div
+        onclick="changeVideo('{{ lesson.youtube_url }}','{{ lesson.id }}')">
+
+            <b>▶ {{ lesson.title }}</b>
+
+            {% if lesson.id in completed_lessons %}
+                <span id="tick-{{ lesson.id }}"> ✔</span>
+            {% else %}
+                <span id="tick-{{ lesson.id }}"></span>
+            {% endif %}
+
+        </div>
+
+        {% if lesson.pdf_file %}
+
+        <br>
+
+        <button
+        onclick="openPDF('{{ lesson.pdf_file.lstrip('/') }}')"
+        style="
+        width:100%;
+        margin-top:12px;
+        padding:14px;
+        background:#2563eb;
+        color:white;
+        border:none;
+        border-radius:10px;
+        cursor:pointer;">
+
+        📄 Open Notes
+
+        </button>
+
+        {% endif %}
+
+        <br><br>
+
+        <a href="/quiz/{{ lesson.id }}">
+
+            <button
+            style="
+            width:100%;
+            padding:12px;
+            background:#16a34a;
+            color:white;
+            border:none;
+            border-radius:10px;
+            cursor:pointer;
+            font-weight:bold;">
+
+            📝 Start Quiz
+
+            </button>
+
+        </a>
+
+    {% endif %}
+
+</div>
+
+{% endfor %}
+
+        </div>
+
+    </div>
+
+    <br>
+
+    <a href="/" style="color:white;">⬅ Back</a>
+
+</div>
+
+
+<script>
+
+pdfjsLib.GlobalWorkerOptions.workerSrc =
+"https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js";
+
+let pdfDoc = null;
+let pageNum = 1;
+let totalPages = 1;
+let scale = 1.4;
+
+async function openPDF(file){
+
+    document.getElementById("pdfOverlay").style.display = "flex";
+    document.getElementById("mainVideo").style.filter = "blur(8px)";
+
+    pdfDoc = await pdfjsLib.getDocument("/" + file).promise;
+
+    totalPages = pdfDoc.numPages;
+    pageNum = 1;
+
+    renderPage(pageNum);
+}
+
+async function renderPage(num){
+
+    const page = await pdfDoc.getPage(num);
+
+    const viewport = page.getViewport({scale});
+
+    const canvas = document.getElementById("pdfCanvas");
+    const ctx = canvas.getContext("2d");
+
+    canvas.height = viewport.height;
+    canvas.width = viewport.width;
+
+    await page.render({
+        canvasContext: ctx,
+        viewport: viewport
+    }).promise;
+
+    document.getElementById("pageInfo").innerHTML =
+        num + " / " + totalPages;
+
+
+
+        document.getElementById("prevBtn").disabled = (pageNum === 1);
+
+        document.getElementById("nextBtn").disabled = (pageNum === totalPages);
+}
+
+function nextPage(){
+
+    if(pageNum >= totalPages) return;
+
+    pageNum++;
+
+    renderPage(pageNum);
+}
+
+function prevPage(){
+
+    if(pageNum <= 1) return;
+
+    pageNum--;
+
+    renderPage(pageNum);
+}
+
+function zoomIn(){
+
+    scale += 0.2;
+
+    renderPage(pageNum);
+}
+
+function zoomOut(){
+
+    if(scale <= 0.6) return;
+
+    scale -= 0.2;
+
+    renderPage(pageNum);
+}
+
+
+function closePDF(){
+
+    document.getElementById("pdfOverlay").style.display = "none";
+
+    document.getElementById("mainVideo").style.filter = "blur(0px)";
+
+}
+
+function changeVideo(url, lessonId){
+
+    document.getElementById("mainVideo").src = url;
+
+    fetch('/mark_complete/' + lessonId);
+
+    fetch('/mark_last_watched/' + lessonId);
+
+    let tick=document.getElementById("tick-"+lessonId);
+
+    if(tick){
+        tick.innerHTML="✔";
+    }
+
+}
+
+</script>
+
+</body>
+</html>

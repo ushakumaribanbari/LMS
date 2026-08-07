@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Submissions</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
+            color: white;
+        }
+
+        h2 {
+            text-align: center;
+            padding: 20px;
+        }
+
+        .container {
+            width: 80%;
+            margin: auto;
+        }
+
+        .card {
+            background: rgba(255,255,255,0.08);
+            backdrop-filter: blur(10px);
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 15px;
+            box-shadow: 0 0 15px rgba(0,150,255,0.3);
+            transition: 0.3s;
+        }
+
+        .card:hover {
+            transform: scale(1.01);
+        }
+
+        .row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .info {
+            flex: 1;
+        }
+
+        .actions {
+            text-align: right;
+        }
+
+        p {
+            margin: 6px 0;
+        }
+
+        input[type="number"] {
+            padding: 8px;
+            border-radius: 10px;
+            border: none;
+            width: 120px;
+            margin-right: 10px;
+        }
+
+        button {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 20px;
+            background: #00c6ff;
+            color: white;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #0096c7;
+        }
+
+        .marks-green {
+            color: #00ffae;
+            font-weight: bold;
+        }
+
+        .marks-red {
+            color: #ff4d4d;
+            font-weight: bold;
+        }
+
+        .back {
+            display: block;
+            text-align: center;
+            margin: 30px;
+        }
+
+    </style>
+</head>
+
+<body>
+
+<h2>📥 Student Submissions</h2>
+
+<div class="container">
+
+{% if data %}
+    
+        {% for s in data %}
+<div class="card">
+
+    <p><strong>Student:</strong> {{ s.name }}</p>
+
+    <p><strong>File:</strong> {{ s.file }}</p>
+
+    <a href="/uploads/{{ s.file }}" download>
+        <button>Download</button>
+    </a>
+
+    <p><strong>Marks:</strong> {{ s.marks if s.marks else 'Not Given' }}</p>
+
+    <form action="/give-marks/{{ s.id }}" method="POST">
+        <input type="number" name="marks" placeholder="Enter Marks" required>
+        <button type="submit">Submit</button>
+    </form>
+
+</div>
+{% endfor %}
+
+
+
+{% else %}
+    <p style="text-align:center;">No submissions yet ❌</p>
+{% endif %}
+
+</div>
+
+<a href="/dashboard" class="back">⬅ Back to Dashboard</a>
+
+</body>
+</html>

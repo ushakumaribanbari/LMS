@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Add Lesson</title>
+</head>
+
+<body style="background:#0f172a; color:white; font-family:Arial;">
+
+<div style="
+max-width:700px;
+margin:40px auto;
+background:#1e293b;
+padding:30px;
+border-radius:15px;
+">
+
+<h1>➕ Add Lesson</h1>
+
+<form method="POST" enctype="multipart/form-data">
+
+<label>Lesson Title</label><br>
+<input type="text" name="title" required
+style="width:100%;padding:10px;margin:10px 0;"><br>
+
+<label>Description</label><br>
+<textarea name="description"
+style="width:100%;padding:10px;height:100px;margin:10px 0;"></textarea><br>
+
+<label>YouTube Link</label><br>
+<input type="text"
+name="youtube_url"
+placeholder="https://youtu.be/xxxxxxxx"
+required
+style="width:100%;padding:10px;margin:10px 0;"><br>
+
+<label>Upload PDF</label><br>
+
+<input
+type="file"
+name="pdf_file"
+accept=".pdf"
+style="width:100%;padding:10px;margin:10px 0;"><br>
+
+<label>Upload PPT</label><br>
+
+<input
+type="file"
+name="ppt_file"
+accept=".ppt,.pptx"
+style="width:100%;padding:10px;margin:10px 0;"><br>
+
+
+<label>Quiz DOCX</label><br>
+
+<input
+type="file"
+name="quiz_docx"
+accept=".doc,.docx"
+style="width:100%;padding:10px;margin:10px 0;">
+
+<label>Lesson Order</label><br>
+<input type="number"
+name="lesson_order"
+value="1"
+required
+style="width:100%;padding:10px;margin:10px 0;"><br><br>
+
+<button
+type="submit"
+style="
+background:#22c55e;
+color:white;
+padding:12px 25px;
+border:none;
+border-radius:8px;
+cursor:pointer;
+font-size:16px;">
+Save Lesson
+</button>
+
+</form>
+
+</div>
+
+</body>
+</html>

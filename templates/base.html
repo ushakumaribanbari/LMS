@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}LMS Pro{% endblock %}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    {% block extra_head %}{% endblock %}
+</head>
+<body>
+
+<button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle menu">☰</button>
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+<aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+        <div class="sidebar-logo-icon">🎓</div>
+        <span>LMS Pro</span>
+    </div>
+    <ul class="sidebar-nav">
+        <li><a href="/dashboard" class="{% if active_page == 'dashboard' %}active{% endif %}">📊 Dashboard</a></li>
+        <li><a href="/my-courses" class="{% if active_page == 'my-courses' %}active{% endif %}">📚 My Courses</a></li>
+        <li><a href="/courses" class="{% if active_page == 'browse' %}active{% endif %}">🔍 Browse Courses</a></li>
+        <li><a href="/assignments" class="{% if active_page == 'assignments' %}active{% endif %}">📝 Assignments</a></li>
+        <li><a href="/quiz-results" class="{% if active_page == 'quiz-results' %}active{% endif %}">🏆 Quiz Results</a></li>
+        {% if role == 'instructor' %}
+
+<li>
+    <a href="/add-course"
+       class="{% if active_page == 'add-course' %}active{% endif %}">
+        Add Course
+    </a>
+</li>
+
+<li>
+    <a href="/manage-courses"
+       class="{% if active_page == 'manage-courses' %}active{% endif %}">
+        Delete Course
+    </a>
+</li>
+
+{% endif %}
+        <li><a href="/logout">🚪 Logout</a></li>
+    </ul>
+</aside>
+
+<div class="main-wrapper">
+    <nav class="navbar">
+        <div class="navbar-left">
+            <div class="logo-icon">🎓</div>
+            <h2>{% block nav_title %}LMS Dashboard{% endblock %}</h2>
+        </div>
+
+        {% block navbar_search %}
+        <div class="navbar-search">
+            <span class="search-icon">🔍</span>
+            <input type="text" placeholder="Search…" id="pageSearch">
+            <div id="searchResults" class="search-results"></div>
+        </div>
+        {% endblock %}
+
+        <div class="navbar-right">
+            <div class="user-profile">
+                <div class="avatar">{{ user_name[0]|upper if user_name else 'U' }}</div>
+                <span class="user-name">{{ user_name }}</span>
+            </div>
+            <a href="/logout" class="logout-btn">Logout</a>
+        </div>
+    </nav>
+
+    <div class="page-content">
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            {% for message in messages %}
+            <div class="flash-message">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+        {% endwith %}
+        {% block content %}{% endblock %}
+    </div>
+</div>
+
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+{% block extra_scripts %}{% endblock %}
+</body>
+</html>

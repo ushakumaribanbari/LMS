@@ -1,0 +1,7 @@
+__pycache__/
+*.pyc
+.env
+venv/
+project_code.txt
+project_files.txt
+projectstructure.txt

@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block title %}My Courses{% endblock %}
+{% block nav_title %}My Courses{% endblock %}
+
+{% block content %}
+
+<div class="section-card">
+
+    <div class="section-header">
+        <h3 class="section-title">My Courses</h3>
+    </div>
+
+    {% if courses %}
+
+    <div class="courses-grid">
+
+        {% for course in courses %}
+        <div class="course-card">
+
+            {% if course.image_url %}
+            <img src="{{ course.image_url }}" class="course-thumb">
+            {% endif %}
+
+            <div class="course-body">
+
+                <h4 class="course-title">{{ course.title }}</h4>
+
+                <p class="course-desc">
+                    {{ course.description }}
+                </p>
+
+                <a href="/course/{{ course.id }}" class="btn-primary">
+                    Continue Learning
+                </a>
+
+            </div>
+
+        </div>
+        {% endfor %}
+
+    </div>
+
+    {% else %}
+
+    <div class="empty-state">
+
+        <h2>You haven't enrolled in any courses yet.</h2>
+
+        <br>
+
+        <a href="/courses" class="btn-primary">
+            Browse Courses
+        </a>
+
+    </div>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}

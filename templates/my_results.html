@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>My Results</title>
+
+    <style>
+
+        body{
+            background:#07122b;
+            color:white;
+            font-family:Arial;
+            padding:40px;
+        }
+
+        .card{
+            background:#1b2945;
+            padding:20px;
+            margin-bottom:20px;
+            border-radius:10px;
+        }
+
+    </style>
+
+</head>
+<body>
+
+<h1>📊 My Results</h1>
+
+{% for result in results %}
+
+<div class="card">
+
+    <h2>Course ID: {{ result.course_id }}</h2>
+
+    <h3>Score: {{ result.score }}/{{ result.total }}</h3>
+
+    <h3>Status: {{ result.status }}</h3>
+
+</div>
+
+{% endfor %}
+
+</body>
+</html>

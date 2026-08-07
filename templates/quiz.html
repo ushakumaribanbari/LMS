@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<meta charset="UTF-8">
+
+<title>AI Quiz</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif;
+}
+
+body{
+
+background:#0f172a;
+color:white;
+
+}
+
+.container{
+
+width:90%;
+max-width:900px;
+margin:auto;
+padding:40px 0;
+
+}
+
+.quiz-header{
+
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:25px;
+
+}
+
+.progress{
+
+width:100%;
+height:10px;
+background:#334155;
+border-radius:50px;
+overflow:hidden;
+margin:25px 0;
+
+}
+
+.progress-bar{
+
+width:0%;
+height:100%;
+background:#22c55e;
+transition:.4s;
+
+}
+
+.question-card{
+
+background:#1e293b;
+padding:30px;
+border-radius:15px;
+display:none;
+
+animation:fade .4s;
+
+}
+
+.question-card.active{
+
+display:block;
+
+}
+
+@keyframes fade{
+
+from{
+
+opacity:0;
+transform:translateX(40px);
+
+}
+
+to{
+
+opacity:1;
+transform:translateX(0);
+
+}
+
+}
+
+.question{
+
+font-size:24px;
+font-weight:bold;
+margin-bottom:30px;
+
+}
+
+.option{
+
+display:block;
+
+padding:18px;
+
+margin-bottom:15px;
+
+background:#334155;
+
+border-radius:10px;
+
+cursor:pointer;
+
+transition:.3s;
+
+}
+
+.option:hover{
+
+background:#475569;
+
+}
+
+
+.correct{
+
+background:#16a34a !important;
+
+color:white;
+
+}
+
+.wrong{
+
+background:#dc2626 !important;
+
+color:white;
+
+}
+
+.option input{
+
+margin-right:10px;
+
+}
+
+.buttons{
+
+display:flex;
+
+justify-content:space-between;
+
+margin-top:35px;
+
+}
+
+button{
+
+padding:15px 30px;
+
+border:none;
+
+border-radius:10px;
+
+cursor:pointer;
+
+font-size:17px;
+
+font-weight:bold;
+
+}
+
+.prev{
+
+background:#64748b;
+
+color:white;
+
+}
+
+.next{
+
+background:#2563eb;
+
+color:white;
+
+}
+
+.submit{
+
+background:#22c55e;
+
+color:white;
+
+display:none;
+
+}
+
+.counter{
+
+font-size:18px;
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>🧠 AI & ML Quiz</h1>
+
+<div class="progress">
+
+<div
+class="progress-bar"
+id="progressBar">
+</div>
+
+</div>
+
+<div class="counter">
+
+Question
+
+<span id="currentQuestion">
+
+1
+
+</span>
+
+/
+
+{{ quizzes|length }}
+
+</div>
+
+<br>
+
+<form method="POST" id="quizForm">
+
+{% for quiz in quizzes %}
+
+<div
+class="question-card {% if loop.first %}active{% endif %}"
+data-correct="{{ quiz.correct_answer }}">
+
+    <div class="question">
+        {{ loop.index }}. {{ quiz.question }}
+    </div>
+
+    <label class="option">
+        <input
+            type="radio"
+            name="question_{{ quiz.id }}"
+            value="A">
+        {{ quiz.option_a }}
+    </label>
+
+    <label class="option">
+        <input
+            type="radio"
+            name="question_{{ quiz.id }}"
+            value="B">
+        {{ quiz.option_b }}
+    </label>
+
+    <label class="option">
+        <input
+            type="radio"
+            name="question_{{ quiz.id }}"
+            value="C">
+        {{ quiz.option_c }}
+    </label>
+
+    <label class="option">
+        <input
+            type="radio"
+            name="question_{{ quiz.id }}"
+            value="D">
+        {{ quiz.option_d }}
+    </label>
+
+</div>
+
+{% endfor %}
+
+<div class="buttons">
+
+<button
+type="button"
+class="prev"
+id="prevBtn">
+
+⬅ Previous
+
+</button>
+
+<button
+type="button"
+class="next"
+id="nextBtn">
+
+Next ➜
+
+</button>
+
+<button
+type="submit"
+class="submit"
+id="submitBtn">
+
+Submit Quiz
+
+</button>
+
+</div>
+
+</form>
+
+</div>
+<script>
+
+let current = 0;
+
+const cards = document.querySelectorAll(".question-card");
+const total = cards.length;
+
+const nextBtn = document.getElementById("nextBtn");
+const prevBtn = document.getElementById("prevBtn");
+const submitBtn = document.getElementById("submitBtn");
+
+const progress = document.getElementById("progressBar");
+const currentQuestion = document.getElementById("currentQuestion");
+
+function showQuestion(index){
+
+    cards.forEach(card=>card.classList.remove("active"));
+
+    cards[index].classList.add("active");
+
+    current=index;
+
+    currentQuestion.innerHTML=index+1;
+
+    progress.style.width=((index+1)/total*100)+"%";
+
+    prevBtn.style.display=index==0?"none":"inline-block";
+
+    if(index==total-1){
+
+        nextBtn.style.display="none";
+
+        submitBtn.style.display="inline-block";
+
+    }else{
+
+        nextBtn.style.display="inline-block";
+
+        submitBtn.style.display="none";
+
+    }
+
+}
+
+// First Question
+showQuestion(0);
+
+
+// Previous Button
+
+prevBtn.onclick=function(){
+
+    if(current>0){
+
+        showQuestion(current-1);
+
+    }
+
+};
+
+
+// Next Button
+
+nextBtn.onclick=function(){
+
+    const checked=cards[current].querySelector("input:checked");
+
+    if(!checked){
+
+        alert("Please select an answer.");
+
+        return;
+
+    }
+
+    showQuestion(current+1);
+
+};
+
+
+
+
+// Green / Red Animation
+
+cards.forEach((card,index)=>{
+
+    const correct=card.dataset.correct;
+
+    const radios=card.querySelectorAll("input");
+
+    radios.forEach(radio=>{
+
+        radio.addEventListener("change",()=>{
+
+            radios.forEach(r=>{
+
+              r.parentElement.style.pointerEvents = "none";
+
+              r.parentElement.classList.remove("correct");
+              r.parentElement.classList.remove("wrong");
+
+            });
+
+
+            // Correct Option
+
+            radios.forEach(r=>{
+
+                if(r.value===correct){
+
+                    r.parentElement.classList.add("correct");
+
+                }
+
+            });
+
+
+            // Wrong Option
+
+            if(radio.value!==correct){
+
+                radio.parentElement.classList.add("wrong");
+
+            }
+
+
+            // Last Question
+
+            if(index==total-1){
+
+                setTimeout(()=>{
+
+                    document.getElementById("quizForm").submit();
+
+                },1000);
+
+            }
+
+            else{
+
+                setTimeout(()=>{
+
+                    showQuestion(index+1);
+
+                },1000);
+
+            }
+
+        });
+
+    });
+
+});
+
+</script>
+</body>
+
+</html>

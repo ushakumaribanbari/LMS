@@ -1,0 +1,258 @@
+{% extends "base.html" %}
+
+{% block title %}Courses — LMS Pro{% endblock %}
+{% block nav_title %}Courses{% endblock %}
+
+{% block content %}
+<section class="hero page-hero-compact">
+    <div class="hero-text">
+        <p class="hero-greeting">Explore</p>
+        <h1 class="hero-title">Browse Courses</h1>
+        <p class="hero-subtitle">Find your next learning adventure, {{ user_name }}.</p>
+    </div>
+    <div class="hero-illustration">
+        <div class="hero-ring">
+            <div class="hero-ring-inner">🔍</div>
+        </div>
+    </div>
+</section>
+
+<div class="section-card">
+    <div class="section-header">
+        <h3 class="section-title">All Courses</h3>
+        <span class="category-badge">{{ courses|length }} available</span>
+    </div>
+
+    <!-- Category Filter Tabs -->
+    <div class="category-filter-container" id="categoryTabs"></div>
+
+    {% if courses %}
+    <div class="courses-grid">
+        {% for course in courses %}
+        <div class="course-card"
+            data-searchable="true"
+            data-category="{{ course.category or 'General' }}"
+            style="animation-delay: {{loop.index0 * 0.08}}s;">
+
+    <div class="price-ribbon">
+        ₹3999
+    </div>
+            {% if course.image_url %}
+            <img src="{{ course.image_url }}" alt="{{ course.title }}" class="course-thumb">
+            {% else %}
+            <div class="course-thumb-placeholder">📚</div>
+            {% endif %}
+            <div class="course-body">
+                <div class="course-meta">
+                    <span class="category-badge">{{ course.category or 'General' }}</span>
+                    {% if course.rating %}
+                    <span style="font-size:12px;color:var(--warning);">⭐ {{ course.rating }}</span>
+                    {% endif %}
+                </div>
+                <h4 class="course-title">{{ course.title }}</h4>
+                <p class="course-desc">{{ course.description or 'No description available.' }}</p>
+               <div class="course-actions">
+
+    {% if role == "admin" or role == "instructor" %}
+
+        <button
+            type="button"
+            class="enroll-btn"
+            onclick="window.location.href='/course/{{ course.id }}'">
+            📖 Open Course
+        </button>
+
+    {% else %}
+
+        <button
+            type="button"
+            class="enroll-btn"
+            onclick="payNow({{ course.id }})">
+            💳 Buy Course ₹{{ course.price }}
+        </button>
+
+    {% endif %}
+
+    <button
+        type="button"
+        class="btn btn-secondary"
+        onclick="viewCourse({{ course.id }})">
+        View Details
+    </button>
+
+</div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <p>No courses available yet.</p>
+        {% if role == 'instructor' %}
+        <a href="/add-course" class="btn-primary" style="display:inline-block;max-width:220px;">Add Course</a>
+        {% endif %}
+    </div>
+    {% endif %}
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    const predefinedCategories = [
+        "All Courses",
+        "AI",
+        "Python",
+        "Java",
+        "Data Science",
+        "Web Development",
+        "Cyber Security",
+        "Cloud Computing"
+    ];
+
+    const courseCards = document.querySelectorAll(".course-card");
+    const tabsContainer = document.getElementById("categoryTabs");
+
+    // Initialize counts with 0
+    const categoryCounts = { "All Courses": courseCards.length };
+    predefinedCategories.slice(1).forEach(c => categoryCounts[c] = 0);
+
+    // Calculate counts
+    courseCards.forEach(card => {
+    let cat = card.getAttribute("data-category");
+
+    if (!cat) return;
+
+    cat = cat.toLowerCase().trim();
+
+    const categoryMap = {
+        "ai": "AI",
+        "python": "Python",
+        "java": "Java",
+        "data": "Data Science",
+        "datascience": "Data Science",
+        "web": "Web Development",
+        "cyber": "Cyber Security",
+        "cloud": "Cloud Computing"
+    };
+
+    cat = categoryMap[cat] || cat;
+
+    if (categoryCounts[cat] !== undefined) {
+        categoryCounts[cat]++;
+    }
+});
+
+    // Create tabs
+    predefinedCategories.forEach((cat, index) => {
+        const tab = document.createElement("button");
+        tab.className = "category-tab" + (index === 0 ? " active" : "");
+        tab.dataset.filter = cat;
+        tab.innerHTML = `${cat} <span class="course-count">${categoryCounts[cat] !== undefined ? categoryCounts[cat] : 0}</span>`;
+        
+        tab.addEventListener("click", () => {
+            // Update active state
+            document.querySelectorAll(".category-tab").forEach(t => t.classList.remove("active"));
+            tab.classList.add("active");
+
+            // Filter cards
+            courseCards.forEach(card => {
+
+    let cardCat = card.getAttribute("data-category");
+
+    if (cardCat) {
+        cardCat = cardCat.toLowerCase().trim();
+
+        const categoryMap = {
+            "ai": "AI",
+            "python": "Python",
+            "java": "Java",
+            "data": "Data Science",
+            "datascience": "Data Science",
+            "web": "Web Development",
+            "cyber": "Cyber Security",
+            "cloud": "Cloud Computing"
+        };
+
+        cardCat = categoryMap[cardCat] || cardCat;
+    }
+
+    if (cat === "All Courses" || cardCat === cat) {
+
+        card.style.display = "";
+
+        setTimeout(() => {
+            card.style.opacity = "1";
+            card.style.transform = "scale(1)";
+        }, 10);
+
+    } else {
+
+        card.style.opacity = "0";
+        card.style.transform = "scale(0.95)";
+
+        setTimeout(() => {
+            card.style.display = "none";
+        }, 300);
+
+    }
+});
+        });
+
+        tabsContainer.appendChild(tab);
+    });
+});
+</script>
+
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+<script>
+function payNow(courseId) {
+
+    var options = {
+        key: "rzp_live_SSgm493FHbxcNw",
+        amount: 399900,
+        currency: "INR",
+        name: "LMS PRO",
+        description: "Course Purchase",
+
+        handler: function (response) {
+            window.location.href =
+                "/payment-success?course_id=" + courseId +
+                "&payment_id=" + response.razorpay_payment_id;
+        }
+    };
+
+    var rzp = new Razorpay(options);
+    rzp.open();
+}
+</script>
+
+
+<script>
+function viewCourse(courseId){
+
+    fetch("/check-purchase/" + courseId)
+    .then(res => res.json())
+    .then(data => {
+
+        if(data.purchased){
+
+            window.location.href="/course/" + courseId;
+
+        }else{
+
+            if(confirm(
+                "Please purchase this course first.\n\nYou need to purchase this course before you can access its content.\n\nWould you like to continue to the payment page?"
+            )){
+
+                payNow(courseId);
+
+            }
+
+        }
+
+    });
+
+}
+</script>
+
+{% endblock %}

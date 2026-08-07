@@ -1,0 +1,206 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard — LMS Pro{% endblock %}
+{% block nav_title %}LMS Dashboard{% endblock %}
+
+{% block navbar_search %}
+<div class="navbar-search">
+
+    <span class="search-icon">🔍</span>
+
+    <input
+        type="text"
+        id="pageSearch"
+        placeholder="Search courses...">
+
+    <div id="searchResults" class="search-results"></div>
+
+</div>
+{% endblock %}
+
+
+
+{% block content %}
+<section class="hero">
+    <div class="hero-text">
+        <p class="hero-greeting">Welcome back,</p>
+        <h1 class="hero-title">{{ user_name }}</h1>
+        <p class="hero-subtitle">Continue your learning journey.</p>
+{% if role == "admin" or role == "instructor" %}
+<div style="margin-top:20px;">
+    <a href="/add-course"
+       style="
+       background:#2563eb;
+       color:white;
+       padding:12px 20px;
+       text-decoration:none;
+       border-radius:8px;
+       margin-right:10px;">
+       ➕ Add Course
+    </a>
+</div>
+{% endif %}
+
+        <div class="hero-stats">
+            <div class="hero-stat">
+                <div class="value">{{ courses|length }}</div>
+                <div class="label">Total Courses</div>
+            </div>
+
+            <div class="hero-stat">
+                <div class="value">0</div>
+                <div class="label">Completed Courses</div>
+            </div>
+
+            <div class="hero-stat">
+                <div class="value">{{ progress_percent or 0}}%</div>
+                <div class="label">Progress</div>
+            </div>
+
+            <div class="hero-stat">
+                <div class="value">0</div>
+                <div class="label">Certificates Earned</div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="hero-illustration">
+        <div class="hero-ring">
+            <div class="hero-ring-inner">📚</div>
+        </div>
+    </div>
+</section>
+
+<!-- Learning Progress -->
+<div class="section-card learning-progress-card">
+    <div class="section-header">
+        <h3 class="section-title">Learning Progress</h3>
+    </div>
+
+    <div class="progress-wrapper">
+        <div class="progress-circle">
+            <div class="progress-circle-inner">
+                <span class="progress-value">{{ progress_percent or 0 }}%</span>
+                <span class="progress-text"></span>
+            </div>Course Completion
+        </div>
+
+        <div class="overall-progress">
+            <div class="progress-labels">
+                <span>Overall Progress</span>
+                <span>{{ progress_percent or 0 }}%</span>
+            </div>
+
+            <div class="progress-bar">
+                <div class="progress-fill"
+                     style="width: {{ progress_percent or 0 }}%;">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if role == "admin" or role == "instructor" %}
+
+<div class="section-card">
+
+    <div class="section-header">
+
+        <h3 class="section-title">📚 My Courses</h3>
+
+    </div>
+
+    {% if courses %}
+
+        <div class="courses-grid">
+
+        {% for course in courses %}
+
+            <div class="course-card">
+
+                <div class="course-body">
+
+                    <h3>{{ course.title }}</h3>
+
+                    <p>{{ course.description }}</p>
+
+                    <div style="margin-top:15px; display:flex; flex-wrap:wrap; gap:10px;">
+
+                        <a href="/manage-course/{{ course.id }}" class="btn btn-primary">
+    ⚙ Manage Course
+</a>
+
+                        <a href="/course/{{ course.id }}" class="btn btn-success">
+                            👁 Preview
+                        </a>
+
+                        <a href="/edit-course/{{ course.id }}" class="btn btn-warning">
+                            ✏ Edit
+                        </a>
+
+                        <a href="/delete-course/{{ course.id }}"
+                           onclick="return confirm('Delete this course?')"
+                           class="btn btn-danger">
+                            🗑 Delete
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        {% endfor %}
+
+        </div>
+
+    {% else %}
+
+        <p>No courses created yet.</p>
+
+    {% endif %}
+
+</div>
+
+{% endif %}
+
+<div class="section-card">
+    <div class="section-header">
+        <h3 class="section-title">Announcements</h3>
+    </div>
+    {% set notes = announcements|default([]) %}
+    {% if notes %}
+        <ul style="list-style:none;">
+            {% for note in notes %}
+            <li class="announcement-desc" style="padding:8px 0;">{{ note }}</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <div class="announcement-card" data-searchable>
+            <div class="announcement-header">
+                <span class="announcement-title">New Python Courses Available</span>
+                <span class="badge info">Info</span>
+            </div>
+            <div class="announcement-date">June 17, 2026</div>
+            <p class="announcement-desc">6 new Python courses have been added. Explore Python Fundamentals, Data Science, Web Development, and more!</p>
+        </div>
+        <div class="announcement-card" data-searchable>
+            <div class="announcement-header">
+                <span class="announcement-title">Assignment Deadline Reminder</span>
+                <span class="badge warning">Warning</span>
+            </div>
+            <div class="announcement-date">June 15, 2026</div>
+            <p class="announcement-desc">Don't forget to submit your pending assignments before the end of this week.</p>
+        </div>
+        <div class="announcement-card" data-searchable>
+            <div class="announcement-header">
+                <span class="announcement-title">Certificate Unlocked!</span>
+                <span class="badge success">Success</span>
+            </div>
+            <div class="announcement-date">June 10, 2026</div>
+            <p class="announcement-desc">Complete 80% of any course to earn your certificate of completion.</p>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

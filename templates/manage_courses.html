@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+
+{% block title %}Delete Courses{% endblock %}
+{% block nav_title %}Delete Courses{% endblock %}
+
+{% block content %}
+
+<div class="section-card">
+
+    <div class="section-header">
+        <h2>🗑 Manage Courses</h2>
+    </div>
+
+    <div style="margin-bottom:25px;">
+        <input
+            type="text"
+            id="courseSearch"
+            placeholder="Search course..."
+            style="
+                width:100%;
+                padding:14px 18px;
+                background:#1e293b;
+                border:1px solid #334155;
+                border-radius:12px;
+                color:white;
+                font-size:15px;
+            "
+        >
+    </div>
+
+    {% for course in courses %}
+
+    <div class="announcement-card course-row"
+         data-course="{{ course.title|lower }}"
+         style="
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            margin-bottom:12px;
+         ">
+
+        <div>
+            <h4>{{ course.title }}</h4>
+            <p style="color:var(--muted);margin-top:5px;">
+                {{ course.category }}
+            </p>
+        </div>
+
+        <a href="/delete-course/{{ course.id }}"
+           onclick="return confirm('Delete this course permanently?')"
+           class="btn-danger">
+           Delete
+        </a>
+
+    </div>
+
+    {% endfor %}
+
+</div>
+
+<script>
+document.getElementById("courseSearch").addEventListener("keyup", function() {
+
+    let value = this.value.toLowerCase();
+
+    document.querySelectorAll(".course-row").forEach(row => {
+
+        let course = row.dataset.course;
+
+        if(course.includes(value)){
+            row.style.display = "flex";
+        } else {
+            row.style.display = "none";
+        }
+
+    });
+
+
+});
+</script>
+
+{% endblock %}
