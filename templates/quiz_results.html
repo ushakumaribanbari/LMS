@@ -5,156 +5,120 @@
 
 {% block content %}
 
-<style>
+<div class="section-card" style="text-align:center;padding:40px;">
 
-.result-buttons{
-    display:flex;
-    justify-content:center;
-    gap:20px;
-    margin-top:35px;
-    flex-wrap:wrap;
-}
+    {% if status == "Passed" %}
 
-.back-btn,
-.certificate-btn,
-.retry-btn{
+        <div style="font-size:70px;">🎉</div>
 
-    display:inline-flex;
-    align-items:center;
-    justify-content:center;
+        <h1 style="color:#22c55e;">Congratulations!</h1>
 
-    min-width:230px;
-    height:55px;
+        <h2>You Passed</h2>
 
-    text-decoration:none;
+    {% else %}
 
-    border-radius:12px;
+        <div style="font-size:70px;">❌</div>
 
-    font-size:18px;
-    font-weight:600;
+        <h1 style="color:#ef4444;">Quiz Failed</h1>
 
-    transition:.3s;
+        <h2>Better Luck Next Time</h2>
 
-    color:#fff;
-}
+    {% endif %}
 
-/* Back Button */
+    <br>
 
-.back-btn{
+    <div style="
+        background:#0f172a;
+        border-radius:15px;
+        padding:25px;
+        margin:20px 0;
+        color:white;
+    ">
 
-    background:#334155;
-    border:2px solid #475569;
-}
+        <h3>Score</h3>
 
-.back-btn:hover{
+        <h1>{{ score }} / {{ total }}</h1>
 
-    background:#475569;
-    transform:translateY(-3px);
-    box-shadow:0 10px 25px rgba(71,85,105,.4);
+        <h2>{{ percentage }}%</h2>
 
-}
+    </div>
 
-/* Certificate */
+    {% if status == "Passed" %}
 
-.certificate-btn{
+    <div class="result-buttons">
 
-    background:linear-gradient(90deg,#6366f1,#06b6d4);
-}
+        <a href="/course/{{ course_id }}" class="back-btn">
+            ⬅ Back To Course
+        </a>
 
-.certificate-btn:hover{
+        {% if is_last_lesson %}
 
-    transform:translateY(-3px);
-    box-shadow:0 10px 25px rgba(6,182,212,.4);
-
-}
-
-/* Retry */
-
-.retry-btn{
-
-    background:#ef4444;
-}
-
-.retry-btn:hover{
-
-    background:#dc2626;
-    transform:translateY(-3px);
-
-}
-
-</style>
-
-<div class="container" style="max-width:700px;margin:auto;padding:50px 20px;">
-
-    <div class="section-card" style="text-align:center;padding:40px;">
-
-        {% if status=="Passed" %}
-
-            <div style="font-size:70px;">🎉</div>
-
-            <h1 style="color:#22c55e;">Congratulations!</h1>
-
-            <h2>You Passed</h2>
+            <a href="{{ url_for('certificate', course_id=course_id) }}"
+               class="next-btn">
+               🏆 Download Certificate
+            </a>
 
         {% else %}
 
-            <div style="font-size:70px;">❌</div>
-
-            <h1 style="color:#ef4444;">Quiz Failed</h1>
-
-            <h2>Better Luck Next Time</h2>
-
-        {% endif %}
-
-        <br>
-
-        <div style="
-            background:#0f172a;
-            border-radius:15px;
-            padding:25px;
-            margin:20px 0;
-        ">
-
-            <h3>Score</h3>
-
-            <h1>{{ score }} / {{ total }}</h1>
-
-            <h2>{{ percentage }}%</h2>
-
-        </div>
-
-        {% if status=="Passed" %}
-
-        <div class="result-buttons">
-
-            <a href="/course/{{ course_id }}" class="back-btn">
-                ⬅ Back To Course
-            </a>
-
-            <a href="/certificate/{{ course_id }}" class="certificate-btn">
-                🏆 Download Certificate
-            </a>
-
-        </div>
-
-        {% else %}
-
-        <div class="result-buttons">
-
-            <a href="{{ url_for('quiz', lesson_id=lesson_id) }}" class="retry-btn">
-                🔄 Retry Quiz
-            </a>
-
-            <a href="/course/{{ course_id }}" class="back-btn">
-                ⬅ Back To Course
-            </a>
-
-        </div>
+            <a href="/course/{{ course_id }}?lesson={{ next_lesson_id }}"
+   class="next-btn">
+   ➜ Next Topic
+</a>
 
         {% endif %}
 
     </div>
 
-</div>
+    {% else %}
 
+    <div class="result-buttons">
+
+        <a href="{{ url_for('quiz', lesson_id=lesson_id) }}"
+           class="retry-btn">
+           🔄 Retry Quiz
+        </a>
+
+        <a href="/course/{{ course_id }}"
+           class="back-btn">
+           ⬅ Back To Course
+        </a>
+
+    </div>
+
+    {% endif %}
+
+</div>
+<style>
+.result-buttons{
+    display:flex;
+    justify-content:center;
+    gap:15px;
+    margin-top:25px;
+}
+
+.back-btn,
+.next-btn,
+.retry-btn{
+    padding:12px 25px;
+    border-radius:10px;
+    text-decoration:none;
+    color:white;
+    font-weight:bold;
+    display:inline-block;
+}
+
+.back-btn{
+    background:#2563eb;
+}
+
+.next-btn{
+    background:#16a34a;
+}
+
+.retry-btn{
+    background:#f59e0b;
+}
+</style>
 {% endblock %}
+
+

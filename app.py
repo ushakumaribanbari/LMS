@@ -874,6 +874,10 @@ def course_detail(course_id):
     """, (course_id,))
 
     lessons = cursor.fetchall()
+
+    selected_lesson = request.args.get("lesson")
+    print("Selected Lesson =", selected_lesson)
+
     
     # ==========================
 # Lesson Unlock Logic
@@ -946,6 +950,40 @@ def course_detail(course_id):
     )
 
 
+
+@app.route('/lesson/<int:lesson_id>')
+def lesson_detail(lesson_id):
+
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+
+    conn = get_db()
+    cursor = conn.cursor(dictionary=True)
+
+    cursor.execute("""
+        SELECT *
+        FROM lessons
+        WHERE id=%s
+    """, (lesson_id,))
+
+    lesson = cursor.fetchone()
+
+    if not lesson:
+        cursor.close()
+        conn.close()
+        return "Lesson not found", 404
+
+    cursor.close()
+    conn.close()
+
+    return render_template(
+        "lesson_detail.html",
+        lesson=lesson
+    )
+
+
+
+
 @app.route("/manage-course/<int:course_id>")
 @login_required
 def manage_course(course_id):
@@ -1014,6 +1052,34 @@ def delete_lesson(lesson_id):
     return redirect(url_for("manage_course", course_id=course_id))
     
     
+
+@app.route("/delete-course/<int:course_id>")
+@login_required
+def delete_course(course_id):
+
+    conn = get_db()
+    cursor = conn.cursor()
+
+    # course ke lessons delete
+    cursor.execute(
+        "DELETE FROM lessons WHERE course_id=%s",
+        (course_id,)
+    )
+
+    # course delete
+    cursor.execute(
+        "DELETE FROM courses WHERE id=%s",
+        (course_id,)
+    )
+
+    conn.commit()
+
+    cursor.close()
+    conn.close()
+
+    return redirect(url_for("courses"))
+
+
     
     
 @app.route("/edit-lesson/<int:lesson_id>", methods=["GET", "POST"])
@@ -1434,7 +1500,7 @@ def quiz(lesson_id):
             if status == "Passed":
                 certificate_id = str(uuid.uuid4())[:8].upper()
 
-            if total > 0 and score < total * 0.7:
+            if total > 0 and score < total * 0.5:
                 status = "Failed"
 
             # Result Save
@@ -1492,16 +1558,51 @@ def quiz(lesson_id):
             cursor.close()
             conn.close()
 
+            # Course ke saare lessons lao
+            conn = get_db()
+            cursor = conn.cursor(dictionary=True)
+
+            cursor.execute("""
+                SELECT id
+                FROM lessons
+                WHERE course_id=%s
+                ORDER BY id
+                """, (course_id,))
+
+            all_lessons = cursor.fetchall()
+
+
+            lesson_ids = [row["id"] for row in all_lessons]
+
+            print("lesson_ids =", lesson_ids)
+            print("lesson_id =", lesson_id)
+
+            current_index = lesson_ids.index(int(lesson_id))
+
+            is_last_lesson = (current_index == len(lesson_ids) - 1)
+
+            next_lesson_id = None
+
+            if not is_last_lesson:
+                next_lesson_id = lesson_ids[current_index + 1]
+
+            cursor.close()
+            conn.close()
+
+
+
             percentage = round((score / total) * 100) if total else 0
 
             return render_template(
-                "quiz_results.html",
+               "quiz_results.html",
                 score=score,
                 total=total,
                 percentage=percentage,
                 status=status,
                 lesson_id=lesson_id,
-                course_id=course_id
+                course_id=course_id,
+                next_lesson_id=next_lesson_id,
+                is_last_lesson=is_last_lesson
             )
 
         cursor.close()
@@ -1527,6 +1628,42 @@ def certificate(course_id):
     conn = get_db()
     cursor = conn.cursor(dictionary=True)
 
+    # ==========================
+    # CHECK COURSE COMPLETION
+    # ==========================
+
+    cursor.execute("""
+        SELECT COUNT(*) AS total_lessons
+        FROM lessons
+        WHERE course_id=%s
+    """, (course_id,))
+
+    total_lessons = cursor.fetchone()["total_lessons"]
+
+    cursor.execute("""
+        SELECT COUNT(*) AS completed_lessons
+        FROM lesson_progress lp
+        JOIN lessons l ON l.id = lp.lesson_id
+        WHERE lp.student_id=%s
+        AND lp.quiz_passed=1
+        AND l.course_id=%s
+    """, (user_id, course_id))
+
+    completed_lessons = cursor.fetchone()["completed_lessons"]
+
+    if completed_lessons < total_lessons:
+        cursor.close()
+        conn.close()
+        return """
+        <h2>⚠ Course Not Completed</h2>
+        <p>Please complete all lessons and quizzes before downloading certificate.</p>
+        <a href='/course/%s'>⬅ Back To Course</a>
+        """ % course_id
+
+    # ==========================
+    # CERTIFICATE DATA
+    # ==========================
+
     cursor.execute("""
         SELECT
             r.certificate_id,
@@ -1550,7 +1687,6 @@ def certificate(course_id):
 
     if not data:
         return "Certificate not found."
-
     temp = tempfile.NamedTemporaryFile(delete=False, suffix=".pdf")
 
     doc = SimpleDocTemplate(
@@ -1655,8 +1791,9 @@ def certificate(course_id):
         download_name="Certificate.pdf"
     )
    
-   
-    
+
+
+
     
 @app.route("/my-results")
 def my_results():
@@ -2049,5 +2186,14 @@ def uploaded_files(filename):
         filename
     )
 
+# if __name__ == "__main__":
+#     app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
+
+
+
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
+    app.run(
+        host="0.0.0.0",
+        port=int(os.environ.get("PORT", 5000)),
+        debug=True
+    )

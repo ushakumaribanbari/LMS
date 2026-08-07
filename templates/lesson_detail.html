@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block title %}Lesson{% endblock %}
+{% block nav_title %}Lesson{% endblock %}
+
+{% block content %}
+
+<div class="section-card">
+
+    <h1>{{ lesson.title }}</h1>
+
+    <hr>
+
+    <div>
+        {{ lesson.content|safe }}
+    </div>
+
+    <br><br>
+
+    <a href="/quiz/{{ lesson.id }}" class="btn">
+        Take Quiz
+    </a>
+
+</div>
+
+{% endblock %}
