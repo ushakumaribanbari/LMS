@@ -1,11 +1,19 @@
 
-from reportlab.lib.pagesizes import landscape, A4
-from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
+from reportlab.platypus import (
+    SimpleDocTemplate,
+    Paragraph,
+    Spacer,
+    Image
+)
 from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.lib.enums import TA_CENTER
 from reportlab.lib.colors import HexColor
 from flask import send_file
 import tempfile
+from reportlab.lib.pagesizes import A4, landscape
+from reportlab.pdfgen import canvas
+from reportlab.lib import colors
+from flask import send_file
 
 import uuid
 
@@ -813,6 +821,7 @@ def my_marks():
 @app.route('/course/<int:course_id>')
 def course_detail(course_id):
 
+    selected_lesson_id = request.args.get("lesson", type=int)
     # Login check
     if 'user_id' not in session:
         flash("Please login first.", "warning")
@@ -874,6 +883,15 @@ def course_detail(course_id):
     """, (course_id,))
 
     lessons = cursor.fetchall()
+
+    # Selected lesson decide karo
+    if selected_lesson_id:
+            current_lesson = next(
+            (lesson for lesson in lessons if lesson["id"] == selected_lesson_id),
+            None
+            )
+    else:
+            current_lesson = lessons[0] if lessons else None
 
     selected_lesson = request.args.get("lesson")
     print("Selected Lesson =", selected_lesson)
@@ -946,7 +964,8 @@ def course_detail(course_id):
         completed_lessons=completed_lessons,
         last_lesson_id=last_lesson_id,
         progress_percent=progress_percent,
-        course_id=course_id
+        course_id=course_id,
+        current_lesson=current_lesson
     )
 
 
@@ -1628,16 +1647,15 @@ def certificate(course_id):
     conn = get_db()
     cursor = conn.cursor(dictionary=True)
 
-    # ==========================
+    # ==========================================
     # CHECK COURSE COMPLETION
-    # ==========================
+    # ==========================================
 
     cursor.execute("""
         SELECT COUNT(*) AS total_lessons
         FROM lessons
         WHERE course_id=%s
     """, (course_id,))
-
     total_lessons = cursor.fetchone()["total_lessons"]
 
     cursor.execute("""
@@ -1654,15 +1672,16 @@ def certificate(course_id):
     if completed_lessons < total_lessons:
         cursor.close()
         conn.close()
-        return """
+
+        return f"""
         <h2>⚠ Course Not Completed</h2>
         <p>Please complete all lessons and quizzes before downloading certificate.</p>
-        <a href='/course/%s'>⬅ Back To Course</a>
-        """ % course_id
+        <a href='/course/{course_id}'>⬅ Back To Course</a>
+        """
 
-    # ==========================
+    # ==========================================
     # CERTIFICATE DATA
-    # ==========================
+    # ==========================================
 
     cursor.execute("""
         SELECT
@@ -1687,111 +1706,287 @@ def certificate(course_id):
 
     if not data:
         return "Certificate not found."
-    temp = tempfile.NamedTemporaryFile(delete=False, suffix=".pdf")
 
-    doc = SimpleDocTemplate(
+    # ==========================================
+    # CREATE PDF
+    # ==========================================
+
+    temp = tempfile.NamedTemporaryFile(
+        delete=False,
+        suffix=".pdf"
+    )
+
+    pdf = canvas.Canvas(
         temp.name,
         pagesize=landscape(A4)
     )
 
-    styles = getSampleStyleSheet()
+    width, height = landscape(A4)
 
-    title = styles["Title"]
-    title.alignment = TA_CENTER
-    title.textColor = HexColor("#1d4ed8")
+    # ==========================================
+    # FILE PATHS
+    # ==========================================
 
-    heading = styles["Heading2"]
-    heading.alignment = TA_CENTER
-
-    normal = styles["BodyText"]
-    normal.alignment = TA_CENTER
-
-    story = []
-
-    story.append(Paragraph(
-                """
-                <font size=30 color='#0F172A'>
-                <b>AICORESYSTEM</b>
-                </font>
-                """,
-                title
-            ))
-
-    story.append(Spacer(1,15))
-
-    story.append(Paragraph(
-            """
-            <font size=24 color='#2563EB'>
-            <b>CERTIFICATE OF SUCCESSFUL COMPLETION</b>
-            </font>
-            """,
-            heading
-        ))
-    story.append(Spacer(1, 25))
-
-    story.append(
-    Paragraph(
-        """
-        <font size=16>
-        This Certificate is proudly presented to
-        </font>
-        """,
-        heading
-        )
+    logo_path = os.path.join(
+        "static",
+        "images",
+        "certificate",
+        "AICore_System_logo.jpeg"
     )
 
-    story.append(Spacer(1, 15))
-
-    story.append(
-        Paragraph(
-            f"<b><font size=24>{data['name']}</font></b>",
-            normal
-        )
+    stamp_path = os.path.join(
+        "static",
+        "images",
+        "certificate",
+        "stamp.png"
     )
 
-    story.append(Spacer(1, 20))
-
-    story.append(
-        Paragraph(
-            f"For successfully completing the course<br/><br/><b>{data['title']}</b>",
-            heading
-        )
+    sign_path = os.path.join(
+        "static",
+        "images",
+        "certificate",
+        "sign.png"
     )
 
-    story.append(Spacer(1, 30))
+    # ==========================================
+    # OUTER BORDER
+    # ==========================================
 
-    story.append(
-        Paragraph(
-            f"Certificate ID : <b>{data['certificate_id']}</b>",
-            normal
-        )
+    pdf.setStrokeColor(colors.HexColor("#1E3A8A"))
+    pdf.setLineWidth(5)
+
+    pdf.rect(
+        20,
+        20,
+        width - 40,
+        height - 40
     )
 
-    story.append(
-        Paragraph(
-            f"Date : {data['completed_at']}",
-            normal
+    # ==========================================
+    # WATERMARK LOGO
+    # ==========================================
+
+    if os.path.exists(logo_path):
+
+        pdf.saveState()
+
+        try:
+            pdf.setFillAlpha(0.08)
+        except:
+            pass
+
+        pdf.drawImage(
+            logo_path,
+            width / 2 - 120,
+            height / 2 - 120,
+            width=240,
+            height=240,
+            mask="auto"
         )
+
+        pdf.restoreState()
+
+    # ==========================================
+    # TOP LOGO
+    # ==========================================
+
+    if os.path.exists(logo_path):
+
+        pdf.drawImage(
+            logo_path,
+            width / 2 - 50,
+            height - 120,
+            width=100,
+            height=80,
+            mask="auto"
+        )
+
+    # ==========================================
+    # COMPANY NAME
+    # ==========================================
+
+    pdf.setFillColor(colors.HexColor("#1E3A8A"))
+    pdf.setFont("Helvetica-Bold", 28)
+
+    pdf.drawCentredString(
+        width / 2,
+        height - 150,
+        "AICORESYSTEM"
     )
 
-    story.append(Spacer(1, 40))
+    # ==========================================
+    # CERTIFICATE TITLE
+    # ==========================================
 
-    story.append(
-        Paragraph(
-            "<b>LMS PRO</b><br/>Authorized Signature",
-            normal
-        )
+    pdf.setFillColor(colors.HexColor("#2563EB"))
+    pdf.setFont("Helvetica-Bold", 22)
+
+    pdf.drawCentredString(
+        width / 2,
+        height - 190,
+        "CERTIFICATE OF COMPLETION"
     )
 
-    doc.build(story)
+    # ==========================================
+    # PRESENTED TO
+    # ==========================================
+
+    pdf.setFillColor(colors.black)
+    pdf.setFont("Helvetica", 14)
+
+    pdf.drawCentredString(
+        width / 2,
+        height - 240,
+        "This Certificate is proudly presented to"
+    )
+
+    # ==========================================
+    # STUDENT NAME
+    # ==========================================
+
+    pdf.setFont("Helvetica-Bold", 30)
+
+    pdf.drawCentredString(
+        width / 2,
+        height - 290,
+        str(data["name"])
+    )
+
+    # ==========================================
+    # COURSE NAME
+    # ==========================================
+
+    pdf.setFont("Helvetica", 16)
+
+    pdf.drawCentredString(
+        width / 2,
+        height - 340,
+        "For successfully completing the course"
+    )
+
+    pdf.setFont("Helvetica-Bold", 20)
+
+    pdf.drawCentredString(
+        width / 2,
+        height - 375,
+        str(data["title"])
+    )
+
+    # ==========================================
+    # CERTIFICATE DETAILS
+    # ==========================================
+
+    pdf.setFont("Helvetica", 12)
+
+    pdf.drawCentredString(
+        width / 2,
+        height - 430,
+        f"Certificate ID : {data['certificate_id']}"
+    )
+
+    pdf.drawCentredString(
+        width / 2,
+        height - 450,
+        f"Date : {data['completed_at']}"
+    )
+
+    # ==========================================
+    # STAMP
+    # ==========================================
+
+    if os.path.exists(stamp_path):
+
+        pdf.drawImage(
+            stamp_path,
+            70,
+            70,
+            width=140,
+            height=140,
+            mask="auto"
+        )
+
+    # ==========================================
+    # SIGNATURE IMAGE
+    # ==========================================
+
+    if os.path.exists(sign_path):
+
+        pdf.drawImage(
+            sign_path,
+            width - 260,
+            120,
+            width=120,
+            height=50,
+            mask="auto"
+        )
+
+    # ==========================================
+    # SIGNATURE LINE
+    # ==========================================
+
+    pdf.line(
+        width - 280,
+        110,
+        width - 120,
+        110
+    )
+
+    pdf.setFont("Helvetica-Bold", 12)
+
+    pdf.drawCentredString(
+        width - 200,
+        90,
+        "Usha Kumari"
+    )
+
+    pdf.setFont("Helvetica", 11)
+
+    pdf.drawCentredString(
+        width - 200,
+        72,
+        "CEO & Director"
+    )
+
+    pdf.drawCentredString(
+        width - 200,
+        56,
+        "AICORESYSTEM"
+    )
+
+    # ==========================================
+    # FOOTER BAR
+    # ==========================================
+
+    pdf.setFillColor(colors.HexColor("#1E3A8A"))
+
+    pdf.rect(
+        20,
+        20,
+        width - 40,
+        25,
+        fill=1
+    )
+
+    pdf.setFillColor(colors.white)
+    pdf.setFont("Helvetica", 8)
+
+    pdf.drawCentredString(
+        width / 2,
+        30,
+        "www.aicoresystem.in | Ahmedabad, Gujarat | helpdesk@aicoresystem.in"
+    )
+
+    # ==========================================
+    # SAVE PDF
+    # ==========================================
+
+    pdf.save()
 
     return send_file(
         temp.name,
         as_attachment=True,
-        download_name="Certificate.pdf"
+        download_name="AICore_Certificate.pdf"
     )
-   
-
 
 
     
