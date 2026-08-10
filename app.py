@@ -1,4 +1,6 @@
 
+from turtle import width
+
 from reportlab.platypus import (
     SimpleDocTemplate,
     Paragraph,
@@ -1797,7 +1799,7 @@ def certificate(course_id):
             width / 2 - 50,
             height - 120,
             width=100,
-            height=80,
+            height=90,
             mask="auto"
         )
 
@@ -1811,7 +1813,7 @@ def certificate(course_id):
     pdf.drawCentredString(
         width / 2,
         height - 150,
-        "AICORESYSTEM"
+        "AICORE SYSTEM"
     )
 
     # ==========================================
@@ -1884,10 +1886,12 @@ def certificate(course_id):
         f"Certificate ID : {data['certificate_id']}"
     )
 
+    date_only = str(data["completed_at"]).split(" ")[0]
+
     pdf.drawCentredString(
         width / 2,
         height - 450,
-        f"Date : {data['completed_at']}"
+        f"Date : {date_only}"
     )
 
     # ==========================================
@@ -1898,10 +1902,10 @@ def certificate(course_id):
 
         pdf.drawImage(
             stamp_path,
-            70,
-            70,
-            width=140,
-            height=140,
+            85,
+            85,
+            width=120,
+            height=150,
             mask="auto"
         )
 
@@ -1913,17 +1917,18 @@ def certificate(course_id):
 
         pdf.drawImage(
             sign_path,
-            width - 260,
-            120,
-            width=120,
-            height=50,
+            width - 245,
+            115,
+            width=90,
+            height=35,
             mask="auto"
         )
 
     # ==========================================
     # SIGNATURE LINE
     # ==========================================
-
+    pdf.setStrokeColor(colors.HexColor("#1E3A8A"))
+    pdf.setLineWidth(2)
     pdf.line(
         width - 280,
         110,
@@ -1946,11 +1951,11 @@ def certificate(course_id):
         72,
         "CEO & Director"
     )
-
+    
     pdf.drawCentredString(
         width - 200,
         56,
-        "AICORESYSTEM"
+        "AICORE SYSTEM"
     )
 
     # ==========================================
