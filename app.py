@@ -1,5 +1,4 @@
 
-from turtle import width
 
 from reportlab.platypus import (
     SimpleDocTemplate,
